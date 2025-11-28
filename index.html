@@ -3,129 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的工具集</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 40px;
-            max-width: 1200px;
-            width: 100%;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 2.5em;
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .tool-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: white;
-            text-decoration: none;
-            display: block;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-        }
-
-        .tool-icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-        }
-
-        .tool-name {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .tool-desc {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-
-        .add-tool {
-            background: #f0f0f0;
-            color: #666;
-            border: 2px dashed #ccc;
-        }
-
-        .add-tool:hover {
-            background: #e8e8e8;
-            border-color: #999;
-        }
-    </style>
+    <title>在线工具集 - 实用网页工具大全</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🛠️ 我的工具集</h1>
-        
-        <div class="tools-grid">
-            <!-- 示例工具卡片 -->
-            <a href="https://www.baidu.com" target="_blank" class="tool-card">
-                <div class="tool-icon">🔍</div>
-                <div class="tool-name">百度搜索</div>
-                <div class="tool-desc">搜索引擎</div>
-            </a>
-
-            <a href="https://github.com" target="_blank" class="tool-card">
-                <div class="tool-icon">💻</div>
-                <div class="tool-name">GitHub</div>
-                <div class="tool-desc">代码托管平台</div>
-            </a>
-
-            <a href="https://www.google.com" target="_blank" class="tool-card">
-                <div class="tool-icon">🌐</div>
-                <div class="tool-name">Google</div>
-                <div class="tool-desc">全球搜索</div>
-            </a>
-
-            <!-- 添加工具按钮 -->
-            <div class="tool-card add-tool" onclick="addTool()">
-                <div class="tool-icon">➕</div>
-                <div class="tool-name">添加工具</div>
-                <div class="tool-desc">点击添加新工具</div>
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <h1>🔧 在线工具集</h1>
             </div>
-        </div>
-    </div>
+            <ul class="nav-links">
+                <li><a href="#tools">工具</a></li>
+                <li><a href="#about">关于</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <script>
-        function addTool() {
-            alert('功能开发中...\n\n下一步我们会添加完整的工具管理功能！');
-        }
-    </script>
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>一站式网页工具解决方案</h2>
+                <p>免费、易用、无需安装的在线工具集合</p>
+            </div>
+        </section>
+
+        <section id="tools" class="tools-section">
+            <h3>常用工具</h3>
+            <div class="tools-grid">
+                <!-- 工具卡片将通过JavaScript动态生成 -->
+            </div>
+        </section>
+
+        <section id="about" class="about-section">
+            <h3>关于本项目</h3>
+            <p>这是一个开源的网页工具集合项目，旨在为用户提供便捷的在线工具服务。</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 在线工具集. 基于 MIT 许可证开源.</p>
+    </footer>
+
+    <script src="js/script.js"></script>
 </body>
 </html>
