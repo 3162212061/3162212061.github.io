@@ -5,45 +5,357 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在线工具集 - 实用网页工具大全</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 侧边栏样式 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #2c3e50;
+            color: white;
+            padding: 80px 0 20px 0;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-header h2 {
+            color: #ecf0f1;
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .tool-category {
+            padding: 10px 20px;
+            color: #bdc3c7;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tool-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tool-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .tool-item:hover {
+            background: #34495e;
+            border-left-color: #3498db;
+        }
+
+        .tool-item.active {
+            background: #34495e;
+            border-left-color: #3498db;
+            color: #3498db;
+        }
+
+        .tool-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            margin-left: 250px;
+            padding: 80px 20px 20px;
+            min-height: 100vh;
+            background: #f8f9fa;
+        }
+
+        .tool-container {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .tool-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tool-iframe {
+            width: 100%;
+            height: calc(100vh - 100px);
+            border: none;
+            background: white;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 1001;
+                background: #2c3e50;
+                color: white;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* 桌面端隐藏菜单按钮 */
+        .menu-toggle {
+            display: none;
+        }
+
+        /* 欢迎页面样式 */
+        .welcome-container {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .welcome-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .welcome-description {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .feature-description {
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
+    <!-- 导航栏 -->
     <header>
         <nav class="navbar">
             <div class="nav-brand">
                 <h1>🔧 在线工具集</h1>
             </div>
             <ul class="nav-links">
-                <li><a href="#tools">工具</a></li>
+                <li><a href="#home">首页</a></li>
                 <li><a href="#about">关于</a></li>
             </ul>
         </nav>
     </header>
 
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h2>一站式网页工具解决方案</h2>
-                <p>免费、易用、无需安装的在线工具集合</p>
-            </div>
-        </section>
+    <!-- 移动端菜单按钮 -->
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
 
-        <section id="tools" class="tools-section">
-            <h3>常用工具</h3>
-            <div class="tools-grid">
-                <!-- 工具卡片将通过JavaScript动态生成 -->
-            </div>
-        </section>
+    <!-- 侧边栏 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>🛠️ 工具列表</h2>
+        </div>
+        
+        <div class="tool-category">开发工具</div>
+        <ul class="tool-list">
+            <li class="tool-item active" data-tool="welcome">
+                <i>🏠</i>欢迎页面
+            </li>
+            <li class="tool-item" data-tool="idcard-generator">
+                <i>🎭</i>身份信息生成器
+            </li>
+            <li class="tool-item" data-tool="bankcard-tools">
+                <i>🏦</i>银行卡工具合集
+            </li>
+            <li class="tool-item" data-tool="age-validator">
+                <i>🛡️</i>保险年龄校验工具
+            </li>
+        </ul>
+    </div>
 
-        <section id="about" class="about-section">
-            <h3>关于本项目</h3>
-            <p>这是一个开源的网页工具集合项目，旨在为用户提供便捷的在线工具服务。</p>
-        </section>
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 欢迎页面 -->
+        <div class="tool-container active" id="welcome">
+            <div class="welcome-container">
+                <div class="welcome-icon">🔧</div>
+                <h1 class="welcome-title">欢迎使用在线工具集</h1>
+                <p class="welcome-description">
+                    一站式网页工具解决方案，提供各种实用的在线工具，免费、易用、无需安装
+                </p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎭</div>
+                        <h3 class="feature-title">身份信息生成器</h3>
+                        <p class="feature-description">
+                            生成虚拟身份信息，支持多种证件类型，包含身份证、居住证、护照等，适用于开发测试
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🏦</div>
+                        <h3 class="feature-title">银行卡工具合集</h3>
+                        <p class="feature-description">
+                            LUHN算法验证与虚拟银行卡生成，支持银行卡号校验、生成和批量操作
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3 class="feature-title">保险年龄校验工具</h3>
+                        <p class="feature-description">
+                            专业的投保年龄计算与校验系统，支持周岁和天数计算，符合保险行业标准
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 身份信息生成器 -->
+        <div class="tool-container" id="idcard-generator">
+            <iframe src="tools/证件号生成器.html" class="tool-iframe" 
+                    title="身份信息生成器"></iframe>
+        </div>
+
+        <!-- 银行卡工具合集 -->
+        <div class="tool-container" id="bankcard-tools">
+            <iframe src="tools/虚拟银行卡生成.html" class="tool-iframe"
+                    title="银行卡工具合集"></iframe>
+        </div>
+
+        <!-- 保险年龄校验工具 -->
+        <div class="tool-container" id="age-validator">
+            <iframe src="tools/年龄校验2.0.html" class="tool-iframe"
+                    title="保险年龄校验工具"></iframe>
+        </div>
     </main>
 
-    <footer>
-        <p>&copy; 2024 在线工具集. 基于 MIT 许可证开源.</p>
-    </footer>
-
     <script src="js/script.js"></script>
+    <script>
+        // 工具切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const toolItems = document.querySelectorAll('.tool-item');
+            const toolContainers = document.querySelectorAll('.tool-container');
+            
+            toolItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const toolId = this.getAttribute('data-tool');
+                    
+                    // 更新活动状态
+                    toolItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应的工具容器
+                    toolContainers.forEach(container => {
+                        container.classList.remove('active');
+                    });
+                    document.getElementById(toolId).classList.add('active');
+                    
+                    // 在移动端点击后自动关闭侧边栏
+                    if (window.innerWidth <= 768) {
+                        toggleSidebar();
+                    }
+                });
+            });
+        });
+
+        // 侧边栏切换（移动端）
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // 点击页面其他区域关闭侧边栏（移动端）
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !menuToggle.contains(event.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+
+        // 窗口大小变化时调整布局
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth > 768) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
 </body>
 </html>
