@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 工具导航 - 我的工具集</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fas fa-robot"></i>
+            <h2>AI 工具导航</h2>
+        </div>
+        
+        <nav class="nav-menu">
+            <a href="../index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>返回主页</span>
+            </a>
+            <a href="index.html" class="nav-item active">
+                <i class="fas fa-compass"></i>
+                <span>工具导航</span>
+            </a>
+            <a href="tools.html" class="nav-item">
+                <i class="fas fa-tools"></i>
+                <span>全部工具</span>
+            </a>
+            <a href="projects.html" class="nav-item">
+                <i class="fas fa-project-diagram"></i>
+                <span>项目展示</span>
+            </a>
+            <a href="about.html" class="nav-item">
+                <i class="fas fa-info-circle"></i>
+                <span>关于</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>© 2024 AI 工具导航</p>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 页面标题 -->
+        <header class="page-header">
+            <h1>🤖 AI 工具导航</h1>
+            <p>探索最新、最强大的人工智能工具</p>
+        </header>
+
+        <!-- 搜索栏 -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索 AI 工具...">
+            </div>
+        </div>
+
+
+        <!-- 常用 -->
+        <section class="featured-section">
+            <h2>🔥 常用</h2>
+            <div class="tools-grid" id="featuredTools">
+                <!-- 工具卡片将通过 JS 动态加载 -->
+            </div>
+        </section>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

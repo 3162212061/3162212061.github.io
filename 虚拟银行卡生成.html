@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银行卡工具合集 - LUHN算法 & 虚拟卡生成</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 15px 15px 0 0;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+            border-bottom: 3px solid #fff;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 0 0 15px 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .result-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 2px;
+        }
+
+        .valid {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .invalid {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .card-preview {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        #bankCard {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        #bankCard.show {
+            display: inline-block;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .button-group button {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-download {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+
+        .btn-download.show {
+            display: block;
+        }
+
+        .btn-download:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .bank-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .bank-info.show {
+            display: block;
+        }
+
+        .bank-info p {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .bank-info strong {
+            color: #333;
+        }
+
+        .bank-info.warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+        }
+
+        .bank-info.warning p {
+            color: #856404;
+        }
+
+        .bank-selector {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .bank-selector.show {
+            display: block;
+        }
+
+        .suffix-input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .suffix-input-container input {
+            flex: 1;
+        }
+
+        .suffix-input-container .clear-btn {
+            margin-left: 10px;
+            padding: 8px 12px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .suffix-input-container .clear-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .suffix-note {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .batch-result {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .batch-item {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            padding: 5px 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            color: #667eea;
+            margin-left: 5px;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            white-space: nowrap;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🏦 银行卡工具合集</h1>
+            <p>LUHN算法验证 & 虚拟银行卡生成</p>
+        </div>
+
+        <!-- 选项卡 -->
+        <div class="tabs">
+            <div class="tab active" data-tab="luhn">银行卡号生成工具</div>
+            <div class="tab" data-tab="virtual">虚拟银行卡生成器</div>
+        </div>
+
+        <!-- LUHN算法选项卡内容 -->
+        <div class="tab-content active" id="luhn-tab">
+            <!-- 算法说明 -->
+            <div class="card">
+                <h2>📖 LUHN算法说明</h2>
+                <div class="algorithm-steps">
+                    <ol>
+                        <li><strong>第一步：</strong>从右边第1个数字开始每隔一位乘以2</li>
+                        <li><strong>第二步：</strong>把在第一步中获得的乘积的各位数字相加，然后再与原号码中未乘2的各位数字相加</li>
+                        <li><strong>第三步：</strong>对于第二步求和值中个位数求10的补数，如果个位数为0则该校验码为0</li>
+                    </ol>
+                </div>
+                <div class="example">
+                    <strong>示例：</strong>6259 6508 7177 209（不含校验码）<br>
+                    第一步：6×2=12, 5×2=10, 6×2=12, 0×2=0, 7×2=14, 7×2=14, 2×2=4, 9×2=18<br>
+                    第二步：(1+2)+(1+0)+(1+2)+0+(1+4)+(1+4)+4+(1+8) = 30<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30 + 2+9+5+8+1+7+0 = 62<br>
+                    第三步：10-2=8<br>
+                    <strong>完整卡号：</strong>6259 6508 7177 2098
+                </div>
+            </div>
+
+            <!-- 主功能区 -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                <!-- 计算校验码 -->
+                <div class="card">
+                    <h2>🔢 计算校验码</h2>
+                    <div class="input-group">
+                        <label>输入不含校验码的卡号：<span class="tooltip" data-tooltip="输入15-18位数字">ⓘ</span></label>
+                        <input type="text" id="calcInput" placeholder="例如：625965087177209" maxlength="18">
+                    </div>
+                    <button class="btn" onclick="calculateChecksum()">计算校验码</button>
+                    <div id="calcResult" class="result" style="display:none;">
+                        <h3>计算结果：</h3>
+                        <div id="calcResultContent"></div>
+                    </div>
+                </div>
+
+                <!-- 验证银行卡号 -->
+                <div class="card">
+                    <h2>✅ 验证银行卡号</h2>
+                    <div class="input-group">
+                        <label>输入完整的银行卡号：</label>
+                        <input type="text" id="verifyInput" placeholder="例如：6259650871772098" maxlength="19">
+                    </div>
+                    <button class="btn" onclick="verifyCard()">验证卡号</button>
+                    <div id="verifyResult" class="result" style="display:none;">
+                        <h3>验证结果：</h3>
+                        <div id="verifyResultContent"></div>
+                    </div>
+                </div>
+
+                <!-- 生成银行卡号 -->
+                <div class="card">
+                    <h2>🎲 生成银行卡号</h2>
+                    <div class="input-group">
+                        <label>选择银行：</label>
+                        <select id="bankSelect" onchange="updatePrefix()">
+                            <option value="622202">中国工商银行 (622202)</option>
+                            <option value="622848">中国农业银行 (622848)</option>
+                            <option value="622700">中国建设银行 (622700)</option>
+                            <option value="622588">中国银行 (622588)</option>
+                            <option value="621483">招商银行 (621483)</option>
+                            <option value="622260">交通银行 (622260)</option>
+                            <option value="621098">邮政储蓄银行 (621098)</option>
+                            <option value="custom">自定义前缀</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>卡号前缀：</label>
+                        <input type="text" id="prefixInput" value="622202" maxlength="10">
+                    </div>
+                    <div class="input-group">
+                        <label>卡号长度：</label>
+                        <input type="number" id="lengthInput" value="16" min="13" max="19">
+                    </div>
+                    <!-- 新增：自定义尾号输入 -->
+                    <div class="input-group">
+                        <label>自定义尾号（包含校验位）：<span class="tooltip" data-tooltip="输入1-5位数字，生成的卡号将以这些数字结尾，最后一位为校验位">ⓘ</span></label>
+                        <div class="suffix-input-container">
+                            <input type="text" id="suffixInput" placeholder="例如：01" maxlength="5">
+                            <button class="clear-btn" onclick="clearSuffix()">清除</button>
+                        </div>
+                        <div class="suffix-note">注意：尾号最后一位是校验位，系统将调整前面的数字以确保符合LUHN算法</div>
+                    </div>
+                    <button class="btn" onclick="generateCard()">生成卡号</button>
+                    <div id="generateResult" class="result" style="display:none;">
+                        <h3>生成结果：</h3>
+                        <div id="generateResultContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 批量生成 -->
+            <div class="card">
+                <h2>📦 批量生成银行卡号</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>卡号前缀：</label>
+                        <input type="text" id="batchPrefix" value="622202" maxlength="10">
+                    </div>
+                    <div class="input-group">
+                        <label>卡号长度：</label>
+                        <input type="number" id="batchLength" value="16" min="13" max="19">
+                    </div>
+                    <div class="input-group">
+                        <label>生成数量：</label>
+                        <input type="number" id="batchCount" value="10" min="1" max="100">
+                    </div>
+                </div>
+                <!-- 新增：批量生成的自定义尾号 -->
+                <div class="input-group">
+                    <label>自定义尾号（包含校验位）：<span class="tooltip" data-tooltip="输入1-5位数字，生成的卡号将以这些数字结尾，最后一位为校验位">ⓘ</span></label>
+                    <div class="suffix-input-container">
+                        <input type="text" id="batchSuffix" placeholder="例如：01" maxlength="5">
+                        <button class="clear-btn" onclick="clearBatchSuffix()">清除</button>
+                    </div>
+                    <div class="suffix-note">注意：尾号最后一位是校验位，系统将调整前面的数字以确保符合LUHN算法</div>
+                </div>
+                <button class="btn" onclick="batchGenerate()">批量生成</button>
+                <div id="batchResult" class="batch-result" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- 虚拟银行卡生成器选项卡内容 -->
+        <div class="tab-content" id="virtual-tab">
+            <div class="warning">
+                <strong>⚠️ 重要提示</strong>
+                此工具生成的银行卡仅用于界面测试，不可用于任何实际交易或非法用途。
+            </div>
+
+            <div class="card">
+                <h2>🏦 虚拟银行卡生成器</h2>
+                <p class="subtitle">仅供测试使用</p>
+
+                <div class="input-group">
+                    <label for="cardNumber">银行卡号</label>
+                    <input type="text" id="cardNumber" placeholder="请输入16-19位银行卡号" maxlength="19">
+                    <div id="bankInfo" class="bank-info"></div>
+                    
+                    <!-- 手动选择银行 -->
+                    <div id="bankSelector" class="bank-selector">
+                        <label for="manualBank">手动选择银行：</label>
+                        <select id="manualBank">
+                            <option value="">-- 请选择银行 --</option>
+                            <option value="ICBC">工商银行</option>
+                            <option value="ABC">农业银行</option>
+                            <option value="CCB">建设银行</option>
+                            <option value="BOC">中国银行</option>
+                            <option value="PSBC">邮储银行</option>
+                            <option value="CMB">招商银行</option>
+                            <option value="BCM">交通银行</option>
+                            <option value="CMBC">民生银行</option>
+                            <option value="CITIC">中信银行</option>
+                            <option value="CEB">光大银行</option>
+                            <option value="CIB">兴业银行</option>
+                            <option value="CGB">广发银行</option>
+                            <option value="PAB">平安银行</option>
+                            <option value="SPDB">浦发银行</option>
+                            <option value="HXB">华夏银行</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="cardHolder">持卡人姓名（可选）</label>
+                    <input type="text" id="cardHolder" placeholder="请输入持卡人姓名">
+                </div>
+
+                <div class="card-preview">
+                    <canvas id="bankCard" width="800" height="500"></canvas>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-generate" id="generateBtn">生成银行卡</button>
+                    <button class="btn-download" id="downloadBtn">下载银行卡</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 选项卡切换功能
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有活动状态
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // 添加当前活动状态
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab + '-tab').classList.add('active');
+            });
+        });
+
+        // ==================== LUHN算法部分 ====================
+
+        // LUHN算法核心函数
+        function calculateLuhnChecksum(cardNumber) {
+            const cardStr = cardNumber.toString().replace(/\s/g, '');
+            let doubledSum = 0;
+            let undoubledSum = 0;
+
+            // 从右往左遍历
+            for (let i = 0; i < cardStr.length; i++) {
+                const digit = parseInt(cardStr[cardStr.length - 1 - i]);
+                
+                if (i % 2 === 0) {
+                    // 奇数位（从右边第1位开始）乘以2
+                    const doubled = digit * 2;
+                    doubledSum += Math.floor(doubled / 10) + (doubled % 10);
+                } else {
+                    // 偶数位保持不变
+                    undoubledSum += digit;
+                }
+            }
+
+            const totalSum = doubledSum + undoubledSum;
+            const checksum = (10 - (totalSum % 10)) % 10;
+            
+            return {
+                checksum: checksum,
+                doubledSum: doubledSum,
+                undoubledSum: undoubledSum,
+                totalSum: totalSum,
+                cardBody: cardStr
+            };
+        }
+
+        // 验证银行卡号
+        function verifyLuhn(cardNumber) {
+            const cardStr = cardNumber.toString().replace(/\s/g, '');
+            if (cardStr.length < 13 || cardStr.length > 19) {
+                return false;
+            }
+
+            const cardBody = cardStr.slice(0, -1);
+            const checkDigit = parseInt(cardStr.slice(-1));
+            const result = calculateLuhnChecksum(cardBody);
+            
+            return result.checksum === checkDigit;
+        }
+
+        // 格式化银行卡号
+        function formatCardNumber(cardNumber) {
+            const cardStr = cardNumber.toString().replace(/\s/g, '');
+            return cardStr.replace(/(\d{4})(?=\d)/g, '$1 ');
+        }
+
+        // 生成随机银行卡号（支持自定义尾号，包含校验位）
+        function generateRandomCard(prefix, length, suffix = '') {
+            // 计算需要随机生成的位数
+            const totalLength = length;
+            const prefixLength = prefix.length;
+            const suffixLength = suffix.length;
+            
+            // 如果指定了尾号，则尾号的最后一位必须是校验位
+            if (suffix) {
+                // 计算中间部分的长度
+                const middleLength = totalLength - prefixLength - suffixLength;
+                
+                if (middleLength < 0) {
+                    alert('卡号长度不足，请增加卡号长度或减少前缀/尾号长度！');
+                    return null;
+                }
+                
+                // 生成中间部分
+                let middlePart = '';
+                for (let i = 0; i < middleLength; i++) {
+                    middlePart += Math.floor(Math.random() * 10);
+                }
+                
+                // 构造完整卡号（不含校验位）
+                const cardBody = prefix + middlePart + suffix.slice(0, -1);
+                
+                // 计算校验位
+                const result = calculateLuhnChecksum(cardBody);
+                
+                // 如果计算出的校验位与尾号最后一位不匹配，需要调整中间部分
+                if (result.checksum.toString() !== suffix.slice(-1)) {
+                    // 尝试调整中间部分来匹配校验位
+                    return adjustCardForSuffix(prefix, length, suffix);
+                }
+                
+                return cardBody + result.checksum;
+            } else {
+                // 原来的逻辑：生成随机卡号
+                const neededLength = length - prefix.length - 1;
+                let cardBody = prefix;
+                
+                for (let i = 0; i < neededLength; i++) {
+                    cardBody += Math.floor(Math.random() * 10);
+                }
+                
+                const result = calculateLuhnChecksum(cardBody);
+                return cardBody + result.checksum;
+            }
+        }
+
+        // 调整卡号以匹配指定的尾号（包含校验位）
+        function adjustCardForSuffix(prefix, length, suffix) {
+            const maxAttempts = 10000; // 最大尝试次数
+            const totalLength = length;
+            const prefixLength = prefix.length;
+            const suffixLength = suffix.length;
+            const middleLength = totalLength - prefixLength - suffixLength;
+            
+            if (middleLength <= 0) {
+                alert('无法生成符合要求的卡号，请增加卡号长度或减少前缀/尾号长度！');
+                return null;
+            }
+            
+            // 尝试生成匹配的卡号
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                // 生成中间部分
+                let middlePart = '';
+                for (let i = 0; i < middleLength; i++) {
+                    middlePart += Math.floor(Math.random() * 10);
+                }
+                
+                // 构造完整卡号（不含校验位）
+                const cardBody = prefix + middlePart + suffix.slice(0, -1);
+                
+                // 计算校验位
+                const result = calculateLuhnChecksum(cardBody);
+                
+                // 检查校验位是否匹配
+                if (result.checksum.toString() === suffix.slice(-1)) {
+                    return cardBody + result.checksum;
+                }
+            }
+            
+            alert('无法生成符合要求的卡号，请尝试更改前缀、尾号或长度！');
+            return null;
+        }
+
+        // 识别银行信息
+        function identifyBank(cardNumber) {
+            const bankDatabase = {
+                '622202': { name: '中国工商银行', type: '借记卡' },
+                '622200': { name: '中国工商银行', type: '借记卡' },
+                '955880': { name: '中国工商银行', type: '信用卡' },
+                '622848': { name: '中国农业银行', type: '借记卡' },
+                '622845': { name: '中国农业银行', type: '借记卡' },
+                '622700': { name: '中国建设银行', type: '借记卡' },
+                '436742': { name: '中国建设银行', type: '信用卡' },
+                '622588': { name: '中国银行', type: '借记卡' },
+                '621660': { name: '中国银行', type: '借记卡' },
+                '621483': { name: '招商银行', type: '借记卡' },
+                '621486': { name: '招商银行', type: '借记卡' },
+                '622260': { name: '交通银行', type: '借记卡' },
+                '621098': { name: '邮政储蓄银行', type: '借记卡' },
+                '622150': { name: '邮政储蓄银行', type: '借记卡' }
+            };
+
+            for (let bin in bankDatabase) {
+                if (cardNumber.startsWith(bin)) {
+                    return bankDatabase[bin];
+                }
+            }
+            
+            return { name: '未知银行', type: '未知类型' };
+        }
+
+        // 计算校验码功能
+        function calculateChecksum() {
+            const input = document.getElementById('calcInput').value.replace(/\s/g, '');
+            const resultDiv = document.getElementById('calcResult');
+            const contentDiv = document.getElementById('calcResultContent');
+
+            if (!input || !/^\d+$/.test(input)) {
+                alert('请输入有效的数字！');
+                return;
+            }
+
+            if (input.length < 12 || input.length > 18) {
+                alert('卡号长度应在12-18位之间！');
+                return;
+            }
+
+            const result = calculateLuhnChecksum(input);
+            const fullCard = input + result.checksum;
+            const bankInfo = identifyBank(input);
+
+            contentDiv.innerHTML = `
+                <div class="result-item">
+                    <strong>原始卡号：</strong><span class="card-number">${formatCardNumber(input)}</span>
+                </div>
+                <div class="result-item">
+                    <strong>校验码：</strong><span style="font-size: 1.5em; color: #667eea; font-weight: bold;">${result.checksum}</span>
+                </div>
+                <div class="result-item">
+                    <strong>完整卡号：</strong><span class="card-number">${formatCardNumber(fullCard)}</span>
+                </div>
+                <div class="result-item">
+                    <strong>银行信息：</strong>${bankInfo.name} - ${bankInfo.type}
+                </div>
+                <div class="result-item">
+                    <strong>计算详情：</strong><br>
+                    偶数位之和: ${result.undoubledSum}<br>
+                    奇数位加倍后之和: ${result.doubledSum}<br>
+                    总和: ${result.totalSum}<br>
+                    校验码: (10 - ${result.totalSum % 10}) % 10 = ${result.checksum}
+                </div>
+            `;
+
+            resultDiv.style.display = 'block';
+        }
+
+        // 验证银行卡号功能
+        function verifyCard() {
+            const input = document.getElementById('verifyInput').value.replace(/\s/g, '');
+            const resultDiv = document.getElementById('verifyResult');
+            const contentDiv = document.getElementById('verifyResultContent');
+
+            if (!input || !/^\d+$/.test(input)) {
+                alert('请输入有效的数字！');
+                return;
+            }
+
+            if (input.length < 13 || input.length > 19) {
+                alert('卡号长度应在13-19位之间！');
+                return;
+            }
+
+            const isValid = verifyLuhn(input);
+            const bankInfo = identifyBank(input);
+            const cardBody = input.slice(0, -1);
+            const checkDigit = input.slice(-1);
+            const calculatedResult = calculateLuhnChecksum(cardBody);
+
+            contentDiv.innerHTML = `
+                <div class="result-item">
+                    <strong>卡号：</strong><span class="card-number">${formatCardNumber(input)}</span>
+                </div>
+                <div class="result-item">
+                    <strong>验证结果：</strong><span class="${isValid ? 'valid' : 'invalid'}">${isValid ? '✓ 有效' : '✗ 无效'}</span>
+                </div>
+                <div class="result-item">
+                    <strong>银行信息：</strong>${bankInfo.name} - ${bankInfo.type}
+                </div>
+                <div class="result-item">
+                    <strong>校验码：</strong>实际=${checkDigit}, 计算=${calculatedResult.checksum}
+                </div>
+                <div class="result-item">
+                    <strong>卡号长度：</strong>${input.length}位
+                </div>
+            `;
+
+            resultDiv.style.display = 'block';
+        }
+
+        // 生成银行卡号功能（支持自定义尾号，包含校验位）
+        function generateCard() {
+            const prefix = document.getElementById('prefixInput').value.replace(/\s/g, '');
+            const length = parseInt(document.getElementById('lengthInput').value);
+            const suffix = document.getElementById('suffixInput').value.replace(/\s/g, '');
+            const resultDiv = document.getElementById('generateResult');
+            const contentDiv = document.getElementById('generateResultContent');
+
+            if (!prefix || !/^\d+$/.test(prefix)) {
+                alert('请输入有效的前缀数字！');
+                return;
+            }
+
+            if (length < 13 || length > 19) {
+                alert('卡号长度应在13-19位之间！');
+                return;
+            }
+
+            if (prefix.length >= length) {
+                alert('前缀长度不能大于等于总长度！');
+                return;
+            }
+
+            if (suffix && !/^\d+$/.test(suffix)) {
+                alert('自定义尾号必须为数字！');
+                return;
+            }
+
+            const cardNumber = generateRandomCard(prefix, length, suffix);
+            if (cardNumber === null) {
+                return;
+            }
+
+            const bankInfo = identifyBank(cardNumber);
+
+            contentDiv.innerHTML = `
+                <div class="result-item">
+                    <strong>生成的卡号：</strong><span class="card-number">${formatCardNumber(cardNumber)}</span>
+                </div>
+                <div class="result-item">
+                    <strong>银行信息：</strong>${bankInfo.name} - ${bankInfo.type}
+                </div>
+                <div class="result-item">
+                    <strong>卡号长度：</strong>${cardNumber.length}位
+                </div>
+                ${suffix ? `<div class="result-item">
+                    <strong>自定义尾号：</strong>${suffix}（最后一位是校验位）
+                </div>` : ''}
+                <div class="result-item">
+                    <strong>验证状态：</strong><span class="valid">✓ 已通过LUHN验证</span>
+                </div>
+                <button class="btn" onclick="copyToClipboard('${cardNumber}')" style="margin-top: 10px;">复制卡号</button>
+            `;
+
+            resultDiv.style.display = 'block';
+        }
+
+        // 批量生成功能（支持自定义尾号，包含校验位）
+        function batchGenerate() {
+            const prefix = document.getElementById('batchPrefix').value.replace(/\s/g, '');
+            const length = parseInt(document.getElementById('batchLength').value);
+            const count = parseInt(document.getElementById('batchCount').value);
+            const suffix = document.getElementById('batchSuffix').value.replace(/\s/g, '');
+            const resultDiv = document.getElementById('batchResult');
+
+            if (!prefix || !/^\d+$/.test(prefix)) {
+                alert('请输入有效的前缀数字！');
+                return;
+            }
+
+            if (length < 13 || length > 19) {
+                alert('卡号长度应在13-19位之间！');
+                return;
+            }
+
+            if (count < 1 || count > 100) {
+                alert('生成数量应在1-100之间！');
+                return;
+            }
+
+            if (prefix.length >= length) {
+                alert('前缀长度不能大于等于总长度！');
+                return;
+            }
+
+            if (suffix && !/^\d+$/.test(suffix)) {
+                alert('自定义尾号必须为数字！');
+                return;
+            }
+
+            let html = '<h3>生成的银行卡号：</h3>';
+            const cards = [];
+
+            for (let i = 0; i < count; i++) {
+                const cardNumber = generateRandomCard(prefix, length, suffix);
+                if (cardNumber === null) {
+                    return;
+                }
+                cards.push(cardNumber);
+                html += `
+                    <div class="batch-item">
+                        <span class="card-number">${formatCardNumber(cardNumber)}</span>
+                        <button class="copy-btn" onclick="copyToClipboard('${cardNumber}')">复制</button>
+                    </div>
+                `;
+            }
+
+            html += `<button class="btn" onclick="copyAllCards(${JSON.stringify(cards).replace(/"/g, '&quot;')})" style="margin-top: 15px;">复制全部</button>`;
+
+            resultDiv.innerHTML = html;
+            resultDiv.style.display = 'block';
+        }
+
+        // 更新前缀
+        function updatePrefix() {
+            const select = document.getElementById('bankSelect');
+            const prefixInput = document.getElementById('prefixInput');
+            
+            if (select.value !== 'custom') {
+                prefixInput.value = select.value;
+                prefixInput.readOnly = true;
+            } else {
+                prefixInput.readOnly = false;
+                prefixInput.focus();
+            }
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert('已复制到剪贴板：' + formatCardNumber(text));
+        }
+
+        // 复制所有卡号
+        function copyAllCards(cards) {
+            const text = cards.join('\n');
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            alert(`已复制${cards.length}个卡号到剪贴板！`);
+        }
+
+        // 清除自定义尾号
+        function clearSuffix() {
+            document.getElementById('suffixInput').value = '';
+        }
+
+        // 清除批量生成的自定义尾号
+        function clearBatchSuffix() {
+            document.getElementById('batchSuffix').value = '';
+        }
+
+        // ==================== 虚拟银行卡生成部分 ====================
+
+        // 银行卡BIN码数据库（前6位）
+        const bankDatabase = {
+            '622202': { name: '工商银行', color: '#C8161D', logo: 'ICBC' },
+            '622848': { name: '农业银行', color: '#00875A', logo: 'ABC' },
+            '622700': { name: '建设银行', color: '#003E7E', logo: 'CCB' },
+            '621700': { name: '建设银行', color: '#003E7E', logo: 'CCB' },
+            '622280': { name: '邮储银行', color: '#00873E', logo: 'PSBC' },
+            '621096': { name: '招商银行', color: '#D32F2F', logo: 'CMB' },
+            '622588': { name: '招商银行', color: '#D32F2F', logo: 'CMB' },
+            '621286': { name: '招商银行', color: '#D32F2F', logo: 'CMB' },
+            '622609': { name: '中国银行', color: '#B8292F', logo: 'BOC' },
+            '621660': { name: '中国银行', color: '#B8292F', logo: 'BOC' },
+            '622208': { name: '交通银行', color: '#003366', logo: 'BCM' },
+            '621002': { name: '交通银行', color: '#003366', logo: 'BCM' },
+            '622600': { name: '民生银行', color: '#006B3F', logo: 'CMBC' },
+            '621691': { name: '民生银行', color: '#006B3F', logo: 'CMBC' },
+            '622622': { name: '中信银行', color: '#D4282D', logo: 'CITIC' },
+            '622690': { name: '光大银行', color: '#6F2D91', logo: 'CEB' },
+            '622650': { name: '兴业银行', color: '#004EA2', logo: 'CIB' },
+            '622656': { name: '广发银行', color: '#C8161D', logo: 'CGB' },
+            '621352': { name: '平安银行', color: '#FF6600', logo: 'PAB' },
+            '622155': { name: '浦发银行', color: '#0066B3', logo: 'SPDB' },
+            '622521': { name: '华夏银行', color: '#D32F2F', logo: 'HXB' },
+        };
+
+        // 银行代码映射表
+        const bankCodeMap = {
+            'ICBC': { name: '工商银行', color: '#C8161D', logo: 'ICBC' },
+            'ABC': { name: '农业银行', color: '#00875A', logo: 'ABC' },
+            'CCB': { name: '建设银行', color: '#003E7E', logo: 'CCB' },
+            'BOC': { name: '中国银行', color: '#B8292F', logo: 'BOC' },
+            'PSBC': { name: '邮储银行', color: '#00873E', logo: 'PSBC' },
+            'CMB': { name: '招商银行', color: '#D32F2F', logo: 'CMB' },
+            'BCM': { name: '交通银行', color: '#003366', logo: 'BCM' },
+            'CMBC': { name: '民生银行', color: '#006B3F', logo: 'CMBC' },
+            'CITIC': { name: '中信银行', color: '#D4282D', logo: 'CITIC' },
+            'CEB': { name: '光大银行', color: '#6F2D91', logo: 'CEB' },
+            'CIB': { name: '兴业银行', color: '#004EA2', logo: 'CIB' },
+            'CGB': { name: '广发银行', color: '#C8161D', logo: 'CGB' },
+            'PAB': { name: '平安银行', color: '#FF6600', logo: 'PAB' },
+            'SPDB': { name: '浦发银行', color: '#0066B3', logo: 'SPDB' },
+            'HXB': { name: '华夏银行', color: '#D32F2F', logo: 'HXB' }
+        };
+
+        // 全局变量存储当前识别的银行
+        let currentBank = null;
+        let isManualSelection = false;
+
+        // 监听卡号输入
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s/g, '');
+            const bankInfo = document.getElementById('bankInfo');
+            const bankSelector = document.getElementById('bankSelector');
+            const manualBank = document.getElementById('manualBank');
+            
+            if (value.length >= 6) {
+                const bin = value.substring(0, 6);
+                const bank = bankDatabase[bin];
+                
+                if (bank) {
+                    // 自动识别到银行
+                    currentBank = bank;
+                    isManualSelection = false;
+                    bankInfo.innerHTML = `
+                        <p><strong>✅ 识别银行：</strong>${bank.name}</p>
+                        <p><strong>卡号长度：</strong>${value.length}位</p>
+                    `;
+                    bankInfo.classList.remove('warning');
+                    bankInfo.classList.add('show');
+                    bankSelector.classList.remove('show');
+                    manualBank.value = '';
+                    console.log('✅ 自动识别银行:', bank.name);
+                } else {
+                    // 未识别到银行，显示手动选择
+                    currentBank = null;
+                    isManualSelection = false;
+                    bankInfo.innerHTML = `<p>⚠️ 未识别到银行信息，请手动选择银行</p>`;
+                    bankInfo.classList.add('warning');
+                    bankInfo.classList.add('show');
+                    bankSelector.classList.add('show');
+                    console.log('⚠️ 未识别到银行，显示手动选择');
+                }
+            } else {
+                // 卡号长度不足6位
+                bankInfo.classList.remove('show');
+                bankSelector.classList.remove('show');
+                currentBank = null;
+                isManualSelection = false;
+            }
+        });
+
+        // 监听手动选择银行
+        document.getElementById('manualBank').addEventListener('change', function(e) {
+            const selectedCode = e.target.value;
+            const bankInfo = document.getElementById('bankInfo');
+            
+            if (selectedCode) {
+                currentBank = bankCodeMap[selectedCode];
+                isManualSelection = true;
+                bankInfo.innerHTML = `
+                    <p><strong>✅ 已选择银行：</strong>${currentBank.name}</p>
+                    <p style="color: #28a745;">手动指定模式</p>
+                `;
+                bankInfo.classList.remove('warning');
+                bankInfo.classList.add('show');
+                console.log('✅ 手动选择银行:', currentBank.name);
+            } else {
+                if (!currentBank) {
+                    bankInfo.innerHTML = `<p>⚠️ 未识别到银行信息，请手动选择银行</p>`;
+                    bankInfo.classList.add('warning');
+                }
+                isManualSelection = false;
+            }
+        });
+
+        // 生成银行卡
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const cardHolder = document.getElementById('cardHolder').value.trim() || '持卡人姓名';
+            
+            // 验证卡号
+            if (!cardNumber || cardNumber.length < 16) {
+                alert('❌ 请输入至少16位的银行卡号');
+                return;
+            }
+
+            // 验证银行信息
+            if (!currentBank) {
+                alert('❌ 请先选择银行');
+                return;
+            }
+
+            console.log('🎨 开始生成银行卡...');
+            console.log('银行:', currentBank.name);
+            console.log('卡号:', cardNumber);
+            console.log('持卡人:', cardHolder);
+            console.log('选择模式:', isManualSelection ? '手动选择' : '自动识别');
+
+            // 生成卡片
+            drawBankCard(currentBank, cardNumber, cardHolder);
+            
+            // 显示画布和下载按钮
+            document.getElementById('bankCard').classList.add('show');
+            document.getElementById('downloadBtn').classList.add('show');
+            
+            console.log('✅ 银行卡生成成功！');
+        });
+
+        // 绘制银行卡
+        function drawBankCard(bank, cardNumber, cardHolder) {
+            const canvas = document.getElementById('bankCard');
+            const ctx = canvas.getContext('2d');
+            
+            // 清空画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制卡片背景 - 渐变色
+            const gradient = ctx.createLinearGradient(0, 0, 800, 500);
+            gradient.addColorStop(0, bank.color);
+            gradient.addColorStop(1, adjustColor(bank.color, -40));
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 800, 500);
+            
+            // 添加装饰圆圈
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.beginPath();
+            ctx.arc(650, 100, 150, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(150, 400, 100, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 绘制银行名称
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 48px Arial';
+            ctx.fillText(bank.name, 60, 100);
+            
+            // 绘制银行LOGO文字
+            ctx.font = 'bold 36px Arial';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillText(bank.logo, 650, 80);
+            
+            // 绘制芯片图标
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(60, 160, 100, 80);
+            ctx.strokeStyle = '#FFF';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(60, 160, 100, 80);
+            
+            // 绘制芯片内部线条
+            ctx.strokeStyle = '#DAA520';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(80 + i * 20, 170);
+                ctx.lineTo(80 + i * 20, 230);
+                ctx.stroke();
+            }
+            
+            // 绘制卡号
+            ctx.font = '44px Courier New';
+            ctx.fillStyle = '#FFFFFF';
+            const formattedNumber = formatCardNumber(cardNumber);
+            ctx.fillText(formattedNumber, 60, 320);
+            
+            // 绘制持卡人信息
+            ctx.font = '24px Arial';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillText('CARD HOLDER', 60, 380);
+            
+            ctx.font = 'bold 32px Arial';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText(cardHolder.toUpperCase(), 60, 420);
+            
+            // 绘制有效期
+            ctx.font = '24px Arial';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillText('VALID THRU', 550, 380);
+            
+            ctx.font = 'bold 32px Arial';
+            ctx.fillStyle = '#FFFFFF';
+            const expiry = generateExpiry();
+            ctx.fillText(expiry, 550, 420);
+            
+            // 添加手动选择标识（如果是手动选择的）
+            if (isManualSelection) {
+                ctx.font = '20px Arial';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.fillText('手动指定', 680, 460);
+            }
+        }
+
+        // 生成有效期
+        function generateExpiry() {
+            const now = new Date();
+            const year = now.getFullYear() + 5;
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            return `${month}/${year.toString().slice(-2)}`;
+        }
+
+        // 调整颜色亮度
+        function adjustColor(color, amount) {
+            const num = parseInt(color.replace('#', ''), 16);
+            const r = Math.max(0, Math.min(255, (num >> 16) + amount));
+            const g = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amount));
+            const b = Math.max(0, Math.min(255, (num & 0x0000FF) + amount));
+            return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+        }
+
+        // 下载银行卡
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const canvas = document.getElementById('bankCard');
+            const link = document.createElement('a');
+            link.download = `银行卡_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            console.log('✅ 银行卡已下载');
+        });
+
+        // 页面加载时初始化
+        window.onload = function() {
+            updatePrefix();
+        };
+    </script>
+</body>
+</html>

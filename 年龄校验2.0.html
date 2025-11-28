@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保险产品年龄校验工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 15px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title .icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .input-group label .required {
+            color: #dc3545;
+            margin-left: 3px;
+        }
+
+        .mode-switcher {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .mode-btn:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        input[type="number"],
+        input[type="date"] {
+            flex: 1;
+            min-width: 150px;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        input:hover {
+            border-color: #b8c5f2;
+        }
+
+        .unit-text {
+            color: #666;
+            font-size: 14px;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button .btn-icon {
+            font-size: 18px;
+        }
+
+        .result-box {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            display: none;
+            animation: slideIn 0.4s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-box.success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 2px solid #28a745;
+        }
+
+        .result-box.error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 2px solid #dc3545;
+        }
+
+        .result-box.info {
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+            border: 2px solid #17a2b8;
+        }
+
+        .result-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed rgba(0,0,0,0.1);
+        }
+
+        .result-title .status-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .result-box.success .status-icon {
+            background: #28a745;
+            color: white;
+        }
+
+        .result-box.error .status-icon {
+            background: #dc3545;
+            color: white;
+        }
+
+        .result-box.info .status-icon {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .result-detail {
+            line-height: 2;
+        }
+
+        .result-detail p {
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .result-detail strong {
+            color: #333;
+            display: inline-block;
+            min-width: 140px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            font-size: 16px;
+            color: #667eea;
+            padding: 2px 8px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 4px;
+        }
+
+        .result-box.success .highlight {
+            color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .result-box.error .highlight {
+            color: #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .divider {
+            margin: 20px 0;
+            border: none;
+            border-top: 2px dashed rgba(0,0,0,0.15);
+        }
+
+        .conclusion {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .result-box.success .conclusion {
+            background: rgba(40, 167, 69, 0.15);
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .result-box.error .conclusion {
+            background: rgba(220, 53, 69, 0.15);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .result-box.info .conclusion {
+            background: rgba(23, 162, 184, 0.15);
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .tip {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #856404;
+            line-height: 1.8;
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+        }
+
+        .tip strong {
+            font-size: 15px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .tip ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .tip li {
+            margin-bottom: 8px;
+        }
+
+        .age-range-display {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .age-range-display .range-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .age-range-display .range-label {
+            font-weight: 600;
+            color: #555;
+            min-width: 120px;
+        }
+
+        .age-range-display .range-value {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .custom-date-toggle {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .custom-date-container {
+            display: none;
+            margin-top: 10px;
+            padding: 15px;
+            background: #f1f3f5;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .boundary-dates {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #e0e0e0;
+        }
+
+        .boundary-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .boundary-item.min {
+            border-left-color: #28a745;
+        }
+
+        .boundary-item.max {
+            border-left-color: #dc3545;
+        }
+
+        .boundary-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .boundary-content {
+            flex: 1;
+        }
+
+        .boundary-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .boundary-date {
+            font-size: 18px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 5px 0;
+        }
+
+        .boundary-item.min .boundary-date {
+            color: #28a745;
+        }
+
+        .boundary-item.max .boundary-date {
+            color: #dc3545;
+        }
+
+        .boundary-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .boundary-age-detail {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 8px 0;
+            color: #333;
+        }
+
+        .boundary-note {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .logic-comparison {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #667eea;
+        }
+
+        .logic-comparison-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logic-comparison-title .icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .logic-comparison-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 25px 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .input-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            input[type="number"],
+            input[type="date"] {
+                min-width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .result-detail strong {
+                min-width: auto;
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .boundary-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .boundary-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ 保险产品年龄校验工具</h1>
+            <p>专业的投保年龄计算与校验系统 | 支持周岁和天数计算 | 符合保险行业标准</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <div class="section-title">
+                    <span class="icon">📋</span>
+                    年龄校验与出生日期区间计算
+                </div>
+                
+                <!-- 计算基准日期 -->
+                <div class="input-group">
+                    <label>
+                        <span>计算基准日期</span>
+                        <span style="color: #999; font-weight: normal; font-size: 13px;">（默认使用当前日期）</span>
+                    </label>
+                    <div class="custom-date-toggle">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="customDateToggle" onchange="toggleCustomDate()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span>使用自定义基准日期</span>
+                    </div>
+                    <div class="custom-date-container" id="customDateContainer">
+                        <input type="date" id="customDate" style="width: 100%;">
+                        <div style="font-size: 13px; color: #666; margin-top: 8px;">
+                            💡 设置一个特定日期作为年龄计算的基准，适用于历史或未来投保场景
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 输入模式切换 -->
+                <div class="input-group">
+                    <label>
+                        <span>年龄输入模式</span>
+                    </label>
+                    <div class="mode-switcher">
+                        <button class="mode-btn active" onclick="switchMode('year')">按周岁输入</button>
+                        <button class="mode-btn" onclick="switchMode('day')">按天数输入</button>
+                    </div>
+                </div>
+                
+                <!-- 产品年龄要求 -->
+                <div class="input-group" id="yearModeInputs">
+                    <label>
+                        <span>产品投保年龄要求</span>
+                        <span class="required">*</span>
+                    </label>
+                    <div class="input-row">
+                        <input type="number" id="minAge" placeholder="最小年龄" value="20" min="0" max="150">
+                        <span class="unit-text">周岁（含）</span>
+                        <span class="unit-text">至</span>
+                        <input type="number" id="maxAge" placeholder="最大年龄" value="45" min="0" max="150">
+                        <span class="unit-text">周岁（含）</span>
+                    </div>
+                </div>
+
+                <!-- 按天数输入模式 -->
+                <div class="input-group" id="dayModeInputs" style="display: none;">
+                    <label>
+                        <span>产品投保年龄要求</span>
+                        <span class="required">*</span>
+                    </label>
+                    <div class="input-row">
+                        <input type="number" id="minAgeDays" placeholder="最小天数" value="7" min="0" max="36500">
+                        <span class="unit-text">天（含）</span>
+                        <span class="unit-text">至</span>
+                        <input type="number" id="maxAgeDays" placeholder="最大年龄" value="70" min="0" max="150">
+                        <span class="unit-text">周岁（含）</span>
+                    </div>
+                    <div style="font-size: 13px; color: #666; margin-top: 8px;">
+                        💡 适用于新生儿保险等需要精确到天的场景，如"出生满7天至70周岁"
+                    </div>
+                </div>
+
+                <!-- 投保人出生日期（可选） -->
+                <div class="input-group">
+                    <label>
+                        <span>投保人出生日期</span>
+                        <span style="color: #999; font-weight: normal; font-size: 13px;">（选填，用于校验具体投保人）</span>
+                    </label>
+                    <input type="date" id="birthDate" style="width: 100%;">
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="button-group">
+                    <button onclick="calculateAll()">
+                        <span class="btn-icon">🔍</span>
+                        <span>全面分析</span>
+                    </button>
+                    <button onclick="clearAll()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%);">
+                        <span class="btn-icon">🔄</span>
+                        <span>重置</span>
+                    </button>
+                </div>
+
+                <!-- 结果显示区 -->
+                <div id="result" class="result-box"></div>
+
+                <!-- 使用说明 -->
+                <div class="tip">
+                    <strong>💡 使用说明：</strong>
+                    <ul>
+                        <li><strong>计算基准日期：</strong>默认使用当前系统日期，可切换为自定义日期，适用于历史或未来投保场景。</li>
+                        <li><strong>两种输入模式：</strong>支持"按周岁输入"和"按天数输入"两种模式，满足不同保险产品的年龄要求。</li>
+                        <li><strong>按周岁输入：</strong>适用于大多数保险产品，输入最小和最大周岁年龄。</li>
+                        <li><strong>按天数输入：</strong>适用于新生儿保险等特殊场景，最小年龄可输入天数，最大年龄输入周岁。</li>
+                        <li><strong>基础功能：</strong>输入产品年龄要求，点击"全面分析"，系统将计算出符合该年龄要求的出生日期区间。</li>
+                        <li><strong>扩展功能：</strong>如果需要校验具体投保人，可以额外填写"投保人出生日期"，系统将同时显示该投保人的年龄及是否符合投保条件。</li>
+                        <li><strong>计算标准：</strong>年龄计算严格遵循保险行业标准的周岁计算法，精确到天。例如：2000年10月28日出生的人，在2025年10月27日仍为24周岁，10月28日当天才满25周岁。</li>
+                        <li><strong>年龄包含关系：</strong>最小年龄和最大年龄均为"含"，即边界值符合条件。例如：20-45周岁表示20周岁和45周岁的投保人都符合条件。</li>
+                        <li><strong>快捷操作：</strong>所有输入框支持键盘Enter键快速提交，点击"重置"按钮可清空所有输入和结果。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'year'; // 'year' 或 'day'
+
+        /**
+         * 页面加载时初始化自定义日期输入框
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置自定义日期输入框的默认值为今天
+            document.getElementById('customDate').value = formatDate(new Date());
+            
+            // 键盘事件监听 - Enter键提交
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        calculateAll();
+                    }
+                });
+            });
+        });
+
+        /**
+         * 切换自定义基准日期显示/隐藏
+         */
+        function toggleCustomDate() {
+            const toggle = document.getElementById('customDateToggle');
+            const container = document.getElementById('customDateContainer');
+            
+            if (toggle.checked) {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        /**
+         * 获取计算基准日期
+         */
+        function getReferenceDate() {
+            const toggle = document.getElementById('customDateToggle');
+            
+            if (toggle.checked) {
+                const customDateValue = document.getElementById('customDate').value;
+                if (customDateValue) {
+                    return new Date(customDateValue);
+                }
+            }
+            
+            // 默认返回当前日期
+            return new Date();
+        }
+
+        /**
+         * 切换输入模式
+         */
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 显示/隐藏对应的输入区域
+            if (mode === 'year') {
+                document.getElementById('yearModeInputs').style.display = 'block';
+                document.getElementById('dayModeInputs').style.display = 'none';
+            } else {
+                document.getElementById('yearModeInputs').style.display = 'none';
+                document.getElementById('dayModeInputs').style.display = 'block';
+            }
+            
+            // 清空结果
+            document.getElementById('result').style.display = 'none';
+        }
+
+        /**
+         * 格式化日期为 YYYY-MM-DD
+         */
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        /**
+         * 格式化日期为中文格式 YYYY年MM月DD日
+         */
+        function formatDateChinese(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}年${month}月${day}日`;
+        }
+
+        /**
+         * 计算周岁年龄（精确到天）
+         * @param {Date} birthDate - 出生日期
+         * @param {Date} targetDate - 目标日期（默认为今天）
+         * @returns {number} 周岁年龄
+         */
+        function calculateAge(birthDate, targetDate = new Date()) {
+            let age = targetDate.getFullYear() - birthDate.getFullYear();
+            const monthDiff = targetDate.getMonth() - birthDate.getMonth();
+            const dayDiff = targetDate.getDate() - birthDate.getDate();
+
+            // 如果还没到生日，年龄减1
+            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                age--;
+            }
+
+            return age;
+        }
+
+        /**
+         * 计算天数年龄
+         * @param {Date} birthDate - 出生日期
+         * @param {Date} targetDate - 目标日期（默认为今天）
+         * @returns {number} 天数年龄
+         */
+        function calculateAgeInDays(birthDate, targetDate = new Date()) {
+            const diffTime = targetDate - birthDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        /**
+         * 计算指定年龄对应的出生日期区间
+         * @param {number} age - 年龄（周岁）
+         * @param {Date} referenceDate - 参考日期（默认为今天）
+         * @returns {Object} 包含最早和最晚出生日期
+         */
+        function calculateBirthDateRange(age, referenceDate = new Date()) {
+            // 最早出生日期：参考日期往前推 age+1 年，再加1天
+            const earliestBirth = new Date(referenceDate);
+            earliestBirth.setFullYear(earliestBirth.getFullYear() - age - 1);
+            earliestBirth.setDate(earliestBirth.getDate() + 1);
+
+            // 最晚出生日期：参考日期往前推 age 年
+            const latestBirth = new Date(referenceDate);
+            latestBirth.setFullYear(latestBirth.getFullYear() - age);
+
+            return {
+                earliest: earliestBirth,
+                latest: latestBirth
+            };
+        }
+
+        /**
+         * 计算指定天数对应的出生日期区间
+         * @param {number} days - 天数
+         * @param {Date} referenceDate - 参考日期（默认为今天）
+         * @returns {Object} 包含最早和最晚出生日期
+         */
+        function calculateBirthDateRangeFromDays(days, referenceDate = new Date()) {
+            // 最早出生日期：参考日期往前推 days 天
+            const earliestBirth = new Date(referenceDate);
+            earliestBirth.setDate(earliestBirth.getDate() - days);
+            
+            // 最晚出生日期：参考日期往前推 days 天（同一天）
+            const latestBirth = new Date(earliestBirth);
+
+            return {
+                earliest: earliestBirth,
+                latest: latestBirth
+            };
+        }
+
+        /**
+         * 计算边界日期
+         * @param {number} minAge - 最小年龄
+         * @param {number} maxAge - 最大年龄
+         * @param {Date} referenceDate - 参考日期
+         * @param {string} mode - 模式 ('year' 或 'day')
+         * @returns {Object} 包含最小和最大边界日期
+         */
+        function calculateBoundaryDates(minAge, maxAge, referenceDate, mode = 'year') {
+            let minBoundaryDate, maxBoundaryDate1, maxBoundaryDate2;
+            
+            if (mode === 'year') {
+                // 周岁模式
+                // 最小年龄边界：刚好满最小年龄的那一天
+                minBoundaryDate = new Date(referenceDate);
+                minBoundaryDate.setFullYear(minBoundaryDate.getFullYear() - minAge);
+                
+                // 最大年龄边界1（逻辑1）：刚好满最大年龄+1岁的前一天（即最大年龄364天）
+                maxBoundaryDate1 = new Date(referenceDate);
+                maxBoundaryDate1.setFullYear(maxBoundaryDate1.getFullYear() - maxAge - 1);
+                maxBoundaryDate1.setDate(maxBoundaryDate1.getDate() + 1);
+                
+                // 最大年龄边界2（逻辑2）：刚好满最大年龄的那一天
+                maxBoundaryDate2 = new Date(referenceDate);
+                maxBoundaryDate2.setFullYear(maxBoundaryDate2.getFullYear() - maxAge);
+            } else {
+                // 天数模式
+                // 最小年龄边界：刚好满最小天数的前一天
+                minBoundaryDate = new Date(referenceDate);
+                minBoundaryDate.setDate(minBoundaryDate.getDate() - minAge);
+                
+                // 最大年龄边界1（逻辑1）：刚好满最大年龄+1岁的前一天（即最大年龄364天）
+                maxBoundaryDate1 = new Date(referenceDate);
+                maxBoundaryDate1.setFullYear(maxBoundaryDate1.getFullYear() - maxAge - 1);
+                maxBoundaryDate1.setDate(maxBoundaryDate1.getDate() + 1);
+                
+                // 最大年龄边界2（逻辑2）：刚好满最大年龄的那一天
+                maxBoundaryDate2 = new Date(referenceDate);
+                maxBoundaryDate2.setFullYear(maxBoundaryDate2.getFullYear() - maxAge);
+            }
+            
+            return {
+                minBoundaryDate,
+                maxBoundaryDate1, // 逻辑1：最大年龄364天
+                maxBoundaryDate2  // 逻辑2：最大年龄0天
+            };
+        }
+
+        /**
+         * 将年龄转换为天数（用于比较）
+         * 参考"天数校验参考.html"中的逻辑
+         */
+        function convertToDays(value, unit, referenceDate) {
+            if (unit === 'days') {
+                return value;
+            } else {
+                // 周岁转换为天数（近似值：1年=365.25天）
+                return value * 365.25;
+            }
+        }
+
+        /**
+         * 显示结果
+         */
+        function showResult(element, type, content) {
+            element.className = `result-box ${type}`;
+            element.innerHTML = content;
+            element.style.display = 'block';
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        /**
+         * 全面分析计算
+         */
+        function calculateAll() {
+            const birthDateInput = document.getElementById('birthDate').value;
+            const resultDiv = document.getElementById('result');
+            const referenceDate = getReferenceDate(); // 获取基准日期
+
+            let minAge, maxAge, resultHTML, validBirthStart, validBirthEnd;
+
+            if (currentMode === 'year') {
+                // 周岁模式
+                minAge = parseInt(document.getElementById('minAge').value);
+                maxAge = parseInt(document.getElementById('maxAge').value);
+
+                // 输入验证
+                if (isNaN(minAge) || isNaN(maxAge)) {
+                    showResult(resultDiv, 'error', `
+                        <div class="result-title">
+                            <span class="status-icon">❌</span>
+                            输入错误
+                        </div>
+                        <div class="result-detail">
+                            <p>请输入有效的年龄数值！</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                if (minAge < 0 || maxAge < 0) {
+                    showResult(resultDiv, 'error', `
+                        <div class="result-title">
+                            <span class="status-icon">❌</span>
+                            输入错误
+                        </div>
+                        <div class="result-detail">
+                            <p>年龄不能为负数！</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                if (minAge > maxAge) {
+                    showResult(resultDiv, 'error', `
+                        <div class="result-title">
+                            <span class="status-icon">❌</span>
+                            输入错误
+                        </div>
+                        <div class="result-detail">
+                            <p>最小年龄（${minAge}周岁）不能大于最大年龄（${maxAge}周岁）！</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                // 计算出生日期区间
+                const minAgeRange = calculateBirthDateRange(minAge, referenceDate);
+                const maxAgeRange = calculateBirthDateRange(maxAge, referenceDate);
+
+                // 符合条件的出生日期区间
+                validBirthStart = maxAgeRange.earliest; // 最大年龄的最早出生日期
+                validBirthEnd = minAgeRange.latest;     // 最小年龄的最晚出生日期
+
+                // 计算边界日期
+                const boundaryDates = calculateBoundaryDates(minAge, maxAge, referenceDate, 'year');
+
+                resultHTML = `
+                    <div class="result-title">
+                        <span class="status-icon">📊</span>
+                        分析结果（周岁模式）
+                    </div>
+                    <div class="result-detail">
+                        <p><strong>计算基准日期：</strong><span class="highlight">${formatDate(referenceDate)}</span></p>
+                        <p><strong>产品年龄要求：</strong><span class="highlight">${minAge}周岁（含）- ${maxAge}周岁（含）</span></p>
+                        
+                        <hr class="divider">
+                        
+                        <div class="boundary-dates">
+                            <p style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 15px;">
+                                🎯 关键边界日期
+                            </p>
+                            <div class="boundary-item min">
+                                <div class="boundary-icon">🎂</div>
+                                <div class="boundary-content">
+                                    <div class="boundary-title">最小购买年龄</div>
+                                    <div class="boundary-age-detail">周岁：${minAge}岁0天</div>
+                                    <div class="boundary-date">出生日期：${formatDateChinese(boundaryDates.minBoundaryDate)}（或更早）</div>
+                                    <div class="boundary-desc">
+                                        在此日期或更早出生的人，在 ${formatDate(referenceDate)} 已满 ${minAge} 周岁，符合最小投保年龄要求。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="boundary-item max">
+                                <div class="boundary-icon">🎯</div>
+                                <div class="boundary-content">
+                                    <div class="boundary-title">最大购买年龄（逻辑1）</div>
+                                    <div class="boundary-age-detail">周岁：${maxAge}岁364天</div>
+                                    <div class="boundary-date">出生日期：${formatDateChinese(boundaryDates.maxBoundaryDate1)}（或更晚）</div>
+                                    <div class="boundary-desc">
+                                        在此日期或更晚出生的人，在 ${formatDate(referenceDate)} 未满 ${maxAge + 1} 周岁，符合最大投保年龄要求。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="boundary-item max">
+                                <div class="boundary-icon">🎯</div>
+                                <div class="boundary-content">
+                                    <div class="boundary-title">最大购买年龄（逻辑2）</div>
+                                    <div class="boundary-age-detail">周岁：${maxAge}岁0天</div>
+                                    <div class="boundary-date">出生日期：${formatDateChinese(boundaryDates.maxBoundaryDate2)}（或更晚）</div>
+                                    <div class="boundary-desc">
+                                        在此日期或更晚出生的人，在 ${formatDate(referenceDate)} 刚好到达 ${maxAge} 周岁，符合最大投保年龄要求。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="logic-comparison">
+                            <div class="logic-comparison-title">
+                                <span class="icon">📝</span>
+                                两种逻辑对比说明
+                            </div>
+                            <div class="logic-comparison-desc">
+                                <p><strong>逻辑1：</strong>严格遵循保险行业标准，最大年龄为"未满下一周岁"，即 ${maxAge} 岁 364 天。这是最常用的标准。</p>
+                                <p><strong>逻辑2：</strong>将最大年龄理解为"刚好满 ${maxAge} 周岁"，即 ${maxAge} 岁 0 天。某些产品可能采用此标准。</p>
+                                <p><strong>推荐使用：</strong>通常情况下，保险行业采用<strong>逻辑1</strong>作为标准计算方法。如有疑问，请参考具体保险产品的条款说明。</p>
+                            </div>
+                        </div>
+                        
+                        <hr class="divider">
+                        
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 2px solid #e0e0e0;">
+                            <p style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 15px;">
+                                📅 符合投保条件的出生日期区间（基于逻辑1）
+                            </p>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #667eea;">
+                                <p style="font-size: 18px; font-weight: bold; color: #667eea; text-align: center; line-height: 1.8;">
+                                    ${formatDate(validBirthStart)} 至 ${formatDate(validBirthEnd)}
+                                </p>
+                            </div>
+                            <p style="margin-top: 15px; color: #666; font-size: 14px; line-height: 1.6;">
+                                <strong>说明：</strong>出生日期在此区间内（含边界日期）的投保人，在 ${formatDate(referenceDate)} 这一天的年龄符合 ${minAge}-${maxAge} 周岁的投保要求。
+                            </p>
+                        </div>
+
+                        <hr class="divider">
+
+                        <div class="age-range-display">
+                            <p style="font-size: 15px; font-weight: bold; color: #333; margin-bottom: 15px;">
+                                🔍 详细年龄区间分解
+                            </p>
+                            <div class="range-item">
+                                <span class="range-label">最小年龄（${minAge}周岁）：</span>
+                                <span class="range-value">${formatDate(minAgeRange.earliest)} ~ ${formatDate(minAgeRange.latest)}</span>
+                            </div>
+                            <div class="range-item">
+                                <span class="range-label">最大年龄（${maxAge}周岁）：</span>
+                                <span class="range-value">${formatDate(maxAgeRange.earliest)} ~ ${formatDate(maxAgeRange.latest)}</span>
+                            </div>
+                        </div>
+                `;
+            } else {
+                // 天数模式 - 修复校验逻辑
+                const minAgeDays = parseInt(document.getElementById('minAgeDays').value);
+                const maxAgeYears = parseInt(document.getElementById('maxAgeDays').value);
+
+                // 输入验证
+                if (isNaN(minAgeDays) || isNaN(maxAgeYears)) {
+                    showResult(resultDiv, 'error', `
+                        <div class="result-title">
+                            <span class="status-icon">❌</span>
+                            输入错误
+                        </div>
+                        <div class="result-detail">
+                            <p>请输入有效的年龄数值！</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                if (minAgeDays < 0 || maxAgeYears < 0) {
+                    showResult(resultDiv, 'error', `
+                        <div class="result-title">
+                            <span class="status-icon">❌</span>
+                            输入错误
+                        </div>
+                        <div class="result-detail">
+                            <p>年龄不能为负数！</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                // 计算出生日期区间
+                const minAgeRange = calculateBirthDateRangeFromDays(minAgeDays, referenceDate);
+                const maxAgeRange = calculateBirthDateRange(maxAgeYears, referenceDate);
+
+                // 符合条件的出生日期区间
+                validBirthStart = maxAgeRange.earliest; // 最大年龄的最早出生日期
+                validBirthEnd = minAgeRange.latest;     // 最小年龄的最晚出生日期
+
+                // 计算边界日期
+                const boundaryDates = calculateBoundaryDates(minAgeDays, maxAgeYears, referenceDate, 'day');
+
+                resultHTML = `
+                    <div class="result-title">
+                        <span class="status-icon">📊</span>
+                        分析结果（天数模式）
+                    </div>
+                    <div class="result-detail">
+                        <p><strong>计算基准日期：</strong><span class="highlight">${formatDate(referenceDate)}</span></p>
+                        <p><strong>产品年龄要求：</strong><span class="highlight">${minAgeDays}天（含）- ${maxAgeYears}周岁（含）</span></p>
+                        
+                        <hr class="divider">
+                        
+                        <div class="boundary-dates">
+                            <p style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 15px;">
+                                🎯 关键边界日期
+                            </p>
+                            <div class="boundary-item min">
+                                <div class="boundary-icon">🎂</div>
+                                <div class="boundary-content">
+                                    <div class="boundary-title">最小购买年龄</div>
+                                    <div class="boundary-age-detail">天数：${minAgeDays}天</div>
+                                    <div class="boundary-date">出生日期：${formatDateChinese(boundaryDates.minBoundaryDate)}（或更早）</div>
+                                    <div class="boundary-desc">
+                                        在此日期或更早出生的人，在 ${formatDate(referenceDate)} 已满 ${minAgeDays} 天，符合最小投保年龄要求。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="boundary-item max">
+                                <div class="boundary-icon">🎯</div>
+                                <div class="boundary-content">
+                                    <div class="boundary-title">最大购买年龄（逻辑1）</div>
+                                    <div class="boundary-age-detail">周岁：${maxAgeYears}岁364天</div>
+                                    <div class="boundary-date">出生日期：${formatDateChinese(boundaryDates.maxBoundaryDate1)}（或更晚）</div>
+                                    <div class="boundary-desc">
+                                        在此日期或更晚出生的人，在 ${formatDate(referenceDate)} 未满 ${maxAgeYears + 1} 周岁，符合最大投保年龄要求。
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="boundary-item max">
+                                <div class="boundary-icon">🎯</div>
+                                <div class="boundary-content">
+                                    <div class="boundary-title">最大购买年龄（逻辑2）</div>
+                                    <div class="boundary-age-detail">周岁：${maxAgeYears}岁0天</div>
+                                    <div class="boundary-date">出生日期：${formatDateChinese(boundaryDates.maxBoundaryDate2)}（或更晚）</div>
+                                    <div class="boundary-desc">
+                                        在此日期或更晚出生的人，在 ${formatDate(referenceDate)} 刚好到达 ${maxAgeYears} 周岁，符合最大投保年龄要求。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="logic-comparison">
+                            <div class="logic-comparison-title">
+                                <span class="icon">📝</span>
+                                两种逻辑对比说明
+                            </div>
+                            <div class="logic-comparison-desc">
+                                <p><strong>逻辑1：</strong>严格遵循保险行业标准，最大年龄为"未满下一周岁"，即 ${maxAgeYears} 岁 364 天。这是最常用的标准。</p>
+                                <p><strong>逻辑2：</strong>将最大年龄理解为"刚好满 ${maxAgeYears} 周岁"，即 ${maxAgeYears} 岁 0 天。某些产品可能采用此标准。</p>
+                                <p><strong>推荐使用：</strong>通常情况下，保险行业采用<strong>逻辑1</strong>作为标准计算方法。如有疑问，请参考具体保险产品的条款说明。</p>
+                            </div>
+                        </div>
+                        
+                        <hr class="divider">
+                        
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border: 2px solid #e0e0e0;">
+                            <p style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 15px;">
+                                📅 符合投保条件的出生日期区间（基于逻辑1）
+                            </p>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #667eea;">
+                                <p style="font-size: 18px; font-weight: bold; color: #667eea; text-align: center; line-height: 1.8;">
+                                    ${formatDate(validBirthStart)} 至 ${formatDate(validBirthEnd)}
+                                </p>
+                            </div>
+                            <p style="margin-top: 15px; color: #666; font-size: 14px; line-height: 1.6;">
+                                <strong>说明：</strong>出生日期在此区间内（含边界日期）的投保人，在 ${formatDate(referenceDate)} 这一天年龄满 ${minAgeDays} 天且不超过 ${maxAgeYears} 周岁。
+                            </p>
+                        </div>
+
+                        <hr class="divider">
+
+                        <div class="age-range-display">
+                            <p style="font-size: 15px; font-weight: bold; color: #333; margin-bottom: 15px;">
+                                🔍 详细年龄区间分解
+                            </p>
+                            <div class="range-item">
+                                <span class="range-label">最小年龄（${minAgeDays}天）：</span>
+                                <span class="range-value">${formatDate(minAgeRange.earliest)}</span>
+                            </div>
+                            <div class="range-item">
+                                <span class="range-label">最大年龄（${maxAgeYears}周岁）：</span>
+                                <span class="range-value">${formatDate(maxAgeRange.earliest)} ~ ${formatDate(maxAgeRange.latest)}</span>
+                            </div>
+                        </div>
+                `;
+            }
+
+            // 如果填写了投保人出生日期，进行校验
+            if (birthDateInput) {
+                const birthDate = new Date(birthDateInput);
+                
+                // 校验日期是否有效
+                if (isNaN(birthDate.getTime())) {
+                    showResult(resultDiv, 'error', `
+                        <div class="result-title">
+                            <span class="status-icon">❌</span>
+                            输入错误
+                        </div>
+                        <div class="result-detail">
+                            <p>投保人出生日期格式不正确！</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                // 检查出生日期是否在未来
+                if (birthDate > referenceDate) {
+                    showResult(resultDiv, 'error', `
+                        <div class="result-title">
+                            <span class="status-icon">❌</span>
+                            输入错误
+                        </div>
+                        <div class="result-detail">
+                            <p>投保人出生日期不能晚于计算基准日期！</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                let isValid, ageDisplay;
+                
+                if (currentMode === 'year') {
+                    const currentAge = calculateAge(birthDate, referenceDate);
+                    isValid = currentAge >= minAge && currentAge <= maxAge;
+                    ageDisplay = `${currentAge}周岁`;
+                } else {
+                    // 修复天数模式校验逻辑 - 参考"天数校验参考.html"
+                    const currentAgeDays = calculateAgeInDays(birthDate, referenceDate);
+                    const currentAgeYears = calculateAge(birthDate, referenceDate);
+                    
+                    // 将最大年龄转换为天数进行比较（与参考文件逻辑一致）
+                    const minAgeDays = parseInt(document.getElementById('minAgeDays').value);
+                    const maxAgeYears = parseInt(document.getElementById('maxAgeDays').value);
+                    const maxAgeDays = convertToDays(maxAgeYears, 'years', referenceDate);
+                    
+                    // 关键修复：使用天数进行比较，而不是混合使用天数和周岁
+                    isValid = currentAgeDays >= minAgeDays && currentAgeDays <= maxAgeDays;
+                    ageDisplay = `${currentAgeDays}天（${currentAgeYears}周岁）`;
+                }
+
+                resultHTML += `
+                    <hr class="divider">
+                    
+                    <div style="background: ${isValid ? '#d4edda' : '#f8d7da'}; padding: 20px; border-radius: 8px; border: 2px solid ${isValid ? '#28a745' : '#dc3545'};">
+                        <p style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 15px;">
+                            👤 投保人年龄校验
+                        </p>
+                        <p><strong>投保人出生日期：</strong><span class="highlight">${formatDate(birthDate)}</span></p>
+                        <p><strong>在 ${formatDate(referenceDate)} 的年龄：</strong><span class="highlight">${ageDisplay}</span></p>
+                        <div class="conclusion" style="background: ${isValid ? 'rgba(40, 167, 69, 0.15)' : 'rgba(220, 53, 69, 0.15)'}; color: ${isValid ? '#155724' : '#721c24'}; border-left: 4px solid ${isValid ? '#28a745' : '#dc3545'};">
+                            ${isValid ? 
+                                `✅ 该投保人符合投保条件` : 
+                                `❌ 该投保人不符合投保条件`
+                            }
+                        </div>
+                    </div>
+                `;
+            }
+
+            resultHTML += `</div>`;
+
+            showResult(resultDiv, 'info', resultHTML);
+        }
+
+        /**
+         * 清空所有输入和结果
+         */
+        function clearAll() {
+            document.getElementById('minAge').value = '';
+            document.getElementById('maxAge').value = '';
+            document.getElementById('minAgeDays').value = '';
+            document.getElementById('maxAgeDays').value = '';
+            document.getElementById('birthDate').value = '';
+            document.getElementById('customDateToggle').checked = false;
+            document.getElementById('customDateContainer').style.display = 'none';
+            document.getElementById('result').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
