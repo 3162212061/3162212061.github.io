@@ -1,0 +1,102 @@
+/* ==================== 子菜单样式 ==================== */
+.has-submenu {
+    position: relative;
+}
+
+.nav-link .arrow {
+    margin-left: auto;
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+
+.has-submenu.open .nav-link .arrow {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    list-style: none;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.has-submenu.open .submenu {
+    max-height: 500px;
+}
+
+.submenu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem 0.75rem 3rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: var(--transition);
+    font-size: 0.9rem;
+}
+
+.submenu-link:hover,
+.submenu-link.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding-left: 3.5rem;
+}
+
+.submenu-link .icon {
+    font-size: 1.2rem;
+    margin-right: 0.75rem;
+    min-width: 20px;
+}
+
+/* 侧边栏收起时隐藏子菜单 */
+.sidebar.collapsed .submenu {
+    display: none;
+}
+
+.sidebar.collapsed .nav-link .arrow {
+    display: none;
+}
+
+/* 激活状态 */
+.nav-link.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.nav-link.active::before {
+    transform: scaleY(1);
+}
+/* ==================== 移动端样式 ==================== */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .search-box {
+        width: 200px;
+    }
+    
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+    
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

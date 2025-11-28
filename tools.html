@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具箱 - 我的工具集</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .tools-section {
+            padding: 4rem 0;
+        }
+        
+        .tools-category {
+            margin-bottom: 3rem;
+        }
+        
+        .tools-category h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .tool-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .tool-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .tool-item h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tool-item p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tool-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .tool-link:hover {
+            background: #764ba2;
+        }
+        
+        .search-box {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .search-box input {
+            width: 100%;
+            max-width: 500px;
+            padding: 1rem;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">🛠️ 我的工具集</div>
+            <ul class="nav-menu">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="tools.html" class="active">工具箱</a></li>
+                <li><a href="projects.html">项目</a></li>
+                <li><a href="about.html">关于</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="tools-section">
+        <div class="container">
+            <h1 style="text-align: center; margin-bottom: 2rem;">🔧 工具箱</h1>
+            
+            <!-- 搜索框 -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 搜索工具...">
+            </div>
+
+            <!-- 开发工具 -->
+            <div class="tools-category">
+                <h2>💻 开发工具</h2>
+                <div class="tool-grid">
+                    <div class="tool-item">
+                        <h3>GitHub</h3>
+                        <p>全球最大的代码托管平台</p>
+                        <a href="https://github.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>VS Code</h3>
+                        <p>微软开发的强大代码编辑器</p>
+                        <a href="https://code.visualstudio.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>Stack Overflow</h3>
+                        <p>程序员问答社区</p>
+                        <a href="https://stackoverflow.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>CodePen</h3>
+                        <p>在线代码编辑器和社区</p>
+                        <a href="https://codepen.io" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>JSFiddle</h3>
+                        <p>在线测试和展示 HTML/CSS/JS</p>
+                        <a href="https://jsfiddle.net" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>Replit</h3>
+                        <p>在线编程环境</p>
+                        <a href="https://replit.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 在线工具 -->
+            <div class="tools-category">
+                <h2>🔧 在线工具</h2>
+                <div class="tool-grid">
+                    <div class="tool-item">
+                        <h3>JSON 格式化</h3>
+                        <p>JSON 数据格式化和验证</p>
+                        <a href="https://www.json.cn" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>正则表达式测试</h3>
+                        <p>在线测试正则表达式</p>
+                        <a href="https://regex101.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>在线工具箱</h3>
+                        <p>各种实用在线工具集合</p>
+                        <a href="https://tool.lu" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>Base64 编解码</h3>
+                        <p>Base64 编码和解码工具</p>
+                        <a href="https://www.base64encode.org" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>颜色选择器</h3>
+                        <p>在线颜色选择和转换</p>
+                        <a href="https://colorhunt.co" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>图片压缩</h3>
+                        <p>在线压缩图片大小</p>
+                        <a href="https://tinypng.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 学习资源 -->
+            <div class="tools-category">
+                <h2>📚 学习资源</h2>
+                <div class="tool-grid">
+                    <div class="tool-item">
+                        <h3>MDN Web Docs</h3>
+                        <p>Web 开发权威文档</p>
+                        <a href="https://developer.mozilla.org" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>菜鸟教程</h3>
+                        <p>编程入门教程网站</p>
+                        <a href="https://www.runoob.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>W3School</h3>
+                        <p>Web 技术教程</p>
+                        <a href="https://www.w3school.com.cn" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>freeCodeCamp</h3>
+                        <p>免费编程学习平台</p>
+                        <a href="https://www.freecodecamp.org" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>LeetCode</h3>
+                        <p>算法练习平台</p>
+                        <a href="https://leetcode.cn" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>GitHub Learning Lab</h3>
+                        <p>GitHub 官方学习平台</p>
+                        <a href="https://lab.github.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 工具 -->
+            <div class="tools-category">
+                <h2>🤖 AI 工具</h2>
+                <div class="tool-grid">
+                    <div class="tool-item">
+                        <h3>ChatGPT</h3>
+                        <p>OpenAI 的对话式 AI</p>
+                        <a href="https://chat.openai.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>GitHub Copilot</h3>
+                        <p>AI 代码助手</p>
+                        <a href="https://github.com/features/copilot" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>Midjourney</h3>
+                        <p>AI 图像生成工具</p>
+                        <a href="https://www.midjourney.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>Claude</h3>
+                        <p>Anthropic 的 AI 助手</p>
+                        <a href="https://claude.ai" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设计工具 -->
+            <div class="tools-category">
+                <h2>🎨 设计工具</h2>
+                <div class="tool-grid">
+                    <div class="tool-item">
+                        <h3>Figma</h3>
+                        <p>在线协作设计工具</p>
+                        <a href="https://www.figma.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>Canva</h3>
+                        <p>在线平面设计平台</p>
+                        <a href="https://www.canva.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>Remove.bg</h3>
+                        <p>AI 自动抠图工具</p>
+                        <a href="https://www.remove.bg" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                    <div class="tool-item">
+                        <h3>Unsplash</h3>
+                        <p>免费高质量图片库</p>
+                        <a href="https://unsplash.com" target="_blank" class="tool-link">访问 →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 我的工具集. Made with ❤️ by 3162212061</p>
+            <p>
+                <a href="https://github.com/3162212061" target="_blank">GitHub</a> | 
+                <a href="mailto:your-email@example.com">Email</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const toolItems = document.querySelectorAll('.tool-item');
+            
+            toolItems.forEach(item => {
+                const title = item.querySelector('h3').textContent.toLowerCase();
+                const description = item.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
