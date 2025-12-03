@@ -509,6 +509,16 @@
                         </div>
                     </div>
                     
+                    <!-- 添加：自定义尾号输入 -->
+                    <div class="input-group">
+                        <label>自定义尾号（包含校验位）：<span class="tooltip" data-tooltip="输入1-5位数字，生成的卡号将以这些数字结尾，最后一位为校验位">ⓘ</span></label>
+                        <div class="suffix-input-container">
+                            <input type="text" id="suffixInput" placeholder="例如：01" maxlength="5">
+                            <button class="clear-btn" onclick="clearSuffix()">清除</button>
+                        </div>
+                        <div class="suffix-note">注意：尾号最后一位是校验位，系统将调整前面的数字以确保符合LUHN算法</div>
+                    </div>
+                    
                     <div class="input-group">
                         <label>持卡人姓名（可选）：</label>
                         <input type="text" id="cardHolderInput" placeholder="例如：张三" maxlength="20">
@@ -562,6 +572,16 @@
                         <label>生成数量：</label>
                         <input type="number" id="batchCount" value="10" min="1" max="100">
                     </div>
+                </div>
+                
+                <!-- 添加：批量生成的自定义尾号输入 -->
+                <div class="input-group">
+                    <label>自定义尾号（包含校验位）：<span class="tooltip" data-tooltip="输入1-5位数字，生成的卡号将以这些数字结尾，最后一位为校验位">ⓘ</span></label>
+                    <div class="suffix-input-container">
+                        <input type="text" id="batchSuffix" placeholder="例如：01" maxlength="5">
+                        <button class="clear-btn" onclick="clearBatchSuffix()">清除</button>
+                    </div>
+                    <div class="suffix-note">注意：尾号最后一位是校验位，系统将调整前面的数字以确保符合LUHN算法</div>
                 </div>
                 
                 <button class="btn" onclick="batchGenerate()">批量生成</button>
@@ -813,6 +833,7 @@
         function generateCard() {
             const prefix = document.getElementById('prefixInput').value.replace(/\s/g, '');
             const length = parseInt(document.getElementById('lengthInput').value);
+            const suffix = document.getElementById('suffixInput').value.replace(/\s/g, '');
             const cardHolder = document.getElementById('cardHolderInput').value.trim() || '持卡人姓名';
             const resultDiv = document.getElementById('generateResult');
             const contentDiv = document.getElementById('generateResultContent');
@@ -834,7 +855,12 @@
                 return;
             }
 
-            const cardNumber = generateRandomCard(prefix, length);
+            if (suffix && !/^\d+$/.test(suffix)) {
+                alert('自定义尾号必须为数字！');
+                return;
+            }
+
+            const cardNumber = generateRandomCard(prefix, length, suffix);
             if (cardNumber === null) {
                 return;
             }
@@ -869,6 +895,9 @@
                 <div class="result-item">
                     <strong>卡号长度：</strong>${cardNumber.length}位
                 </div>
+                ${suffix ? `<div class="result-item">
+                    <strong>自定义尾号：</strong>${suffix}（最后一位是校验位）
+                </div>` : ''}
                 <div class="result-item">
                     <strong>验证状态：</strong><span class="valid">✓ 已通过LUHN验证</span>
                 </div>
@@ -883,6 +912,7 @@
             const prefix = document.getElementById('batchPrefix').value.replace(/\s/g, '');
             const length = parseInt(document.getElementById('batchLength').value);
             const count = parseInt(document.getElementById('batchCount').value);
+            const suffix = document.getElementById('batchSuffix').value.replace(/\s/g, '');
             const resultDiv = document.getElementById('batchResult');
 
             if (!prefix || !/^\d+$/.test(prefix)) {
@@ -905,11 +935,16 @@
                 return;
             }
 
+            if (suffix && !/^\d+$/.test(suffix)) {
+                alert('自定义尾号必须为数字！');
+                return;
+            }
+
             let html = '<h3>生成的银行卡号：</h3>';
             const cards = [];
 
             for (let i = 0; i < count; i++) {
-                const cardNumber = generateRandomCard(prefix, length);
+                const cardNumber = generateRandomCard(prefix, length, suffix);
                 if (cardNumber === null) {
                     return;
                 }
@@ -963,6 +998,16 @@
             document.execCommand('copy');
             document.body.removeChild(textarea);
             alert(`已复制${cards.length}个卡号到剪贴板！`);
+        }
+
+        // 清除自定义尾号
+        function clearSuffix() {
+            document.getElementById('suffixInput').value = '';
+        }
+
+        // 清除批量生成的自定义尾号
+        function clearBatchSuffix() {
+            document.getElementById('batchSuffix').value = '';
         }
 
         // ==================== 虚拟银行卡生成部分 ====================
