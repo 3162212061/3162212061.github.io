@@ -634,44 +634,82 @@
             document.getElementById('specificDateTab').style.display = tabName === 'specificDate' ? 'block' : 'none';
         }
 
+		// 计算年龄（周岁和天数）
+        function calculateAge(birthDateStr) {
+            const birthDate = new Date(
+                parseInt(birthDateStr.substring(0, 4)),
+                parseInt(birthDateStr.substring(4, 6)) - 1,
+                parseInt(birthDateStr.substring(6, 8))
+            );
+            const today = new Date();
+            
+            // 计算周岁
+            let years = today.getFullYear() - birthDate.getFullYear();
+            
+            // 如果今年的生日还没过，周岁减1
+            const thisYearBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+            if (today < thisYearBirthday) {
+                years--;
+            }
+            
+            // 计算天数
+            let days;
+            if (today >= thisYearBirthday) {
+                // 生日已经过了，计算从生日到今天的天数
+                const lastBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+                days = Math.floor((today - lastBirthday) / (1000 * 60 * 60 * 24));
+            } else {
+                // 生日还没过，计算从去年生日到今天的天数
+                const lastBirthday = new Date(today.getFullYear() - 1, birthDate.getMonth(), birthDate.getDate());
+                days = Math.floor((today - lastBirthday) / (1000 * 60 * 60 * 24));
+            }
+            
+            return { years, days };
+        }
+		
         // 根据年龄范围生成随机日期（修正版）
-		function randomDateFromAgeRange(minAge, minUnit, maxAge, maxUnit) {
-			const today = new Date();
-			
-			// 将年龄统一转换为天数
-			function convertToDays(value, unit) {
-				if (unit === 'days') {
-					return value;
-				} else {
-					// 周岁转换为天数（近似值：1年=365.25天）
-					return Math.floor(value * 365.25);
-				}
-			}
-			
-			const minDays = convertToDays(minAge, minUnit);
-			const maxDays = convertToDays(maxAge, maxUnit);
-			
-			// 确保minDays <= maxDays
-			if (minDays > maxDays) {
-				[minDays, maxDays] = [maxDays, minDays];
-			}
-			
-			// 计算日期范围
-			const minDate = new Date(today);
-			minDate.setDate(today.getDate() - maxDays); // 最大年龄对应最早日期
-			
-			const maxDate = new Date(today);
-			maxDate.setDate(today.getDate() - minDays); // 最小年龄对应最晚日期
-			
-			// 生成随机日期
-			const randomTime = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
-			const randomDate = new Date(randomTime);
-			
-			const year = randomDate.getFullYear();
-			const month = String(randomDate.getMonth() + 1).padStart(2, '0');
-			const day = String(randomDate.getDate()).padStart(2, '0');
-			return `${year}${month}${day}`;
-		}
+        function randomDateFromAgeRange(minAge, minUnit, maxAge, maxUnit) {
+            const today = new Date();
+            
+            // 将年龄统一转换为天数
+            function convertToDays(value, unit) {
+                if (unit === 'days') {
+                    return value;
+                } else {
+                    // 周岁转换为天数（近似值：1年=365.25天）
+                    return Math.floor(value * 365.25);
+                }
+            }
+            
+            const minDays = convertToDays(minAge, minUnit);
+            const maxDays = convertToDays(maxAge, maxUnit);
+            
+            // 确保minDays <= maxDays
+            if (minDays > maxDays) {
+                [minDays, maxDays] = [maxDays, minDays];
+            }
+            
+            // 计算日期范围
+            const maxDate = new Date(today);
+            maxDate.setDate(today.getDate() - minDays); // 最小年龄对应最晚日期
+            
+            const minDate = new Date(today);
+            minDate.setDate(today.getDate() - maxDays); // 最大年龄对应最早日期
+            
+            // 确保最小日期不晚于最大日期
+            if (minDate > maxDate) {
+                [minDate, maxDate] = [maxDate, minDate];
+            }
+            
+            // 生成随机日期
+            const randomTime = minDate.getTime() + Math.random() * (maxDate.getTime() - minDate.getTime());
+            const randomDate = new Date(randomTime);
+            
+            const year = randomDate.getFullYear();
+            const month = String(randomDate.getMonth() + 1).padStart(2, '0');
+            const day = String(randomDate.getDate()).padStart(2, '0');
+            return `${year}${month}${day}`;
+        }
 
         // 从具体日期生成
         function dateFromSpecificDate(specificDate) {
@@ -891,7 +929,7 @@
             }
         }
 
-        // 单个生成
+// 单个生成
         function generate() {
             const docType = document.getElementById('docType').value;
             const gender = document.getElementById('gender').value;
@@ -975,12 +1013,16 @@
 
             // 格式化出生日期显示
             const formattedBirthDate = `${birthDate.substring(0,4)}-${birthDate.substring(4,6)}-${birthDate.substring(6,8)}`;
+            
+            // 计算年龄
+            const age = calculateAge(birthDate);
+            const ageText = `（${age.years}周岁${age.days}天）`;
 
             let resultHTML = `
                 <div class="result-item"><strong>姓名：</strong>${name}</div>
                 <div class="result-item"><strong>性别：</strong>${genderText}</div>
                 <div class="result-item"><strong>证件类型：</strong>${docTypeText}</div>
-                <div class="result-item"><strong>出生日期：</strong>${formattedBirthDate}</div>
+                <div class="result-item"><strong>出生日期：</strong>${formattedBirthDate}${ageText}</div>
                 <div class="result-item"><strong>证件号码：</strong>${docNumber}</div>
                 <div class="result-item"><strong>手机号：</strong>${phoneNumber}</div>
             `;
@@ -1012,7 +1054,7 @@
             }
 
             batchData = [];
-            let html = '<table><thead><tr><th>序号</th><th>姓名</th><th>性别</th><th>出生日期</th><th>证件号码</th><th>手机号</th>';
+            let html = '<table><thead><tr><th>序号</th><th>姓名</th><th>性别</th><th>出生日期</th><th>年龄</th><th>证件号码</th><th>手机号</th>';
 
             if (generateBankCardChecked) {
                 html += '<th>银行卡号</th><th>银行</th>';
@@ -1030,6 +1072,10 @@
                 // 批量生成使用默认的年龄范围生成方式
                 const birthDate = randomDateFromAgeRange(minAge, 'years', maxAge, 'years');
                 const formattedBirthDate = `${birthDate.substring(0,4)}-${birthDate.substring(4,6)}-${birthDate.substring(6,8)}`;
+                
+                // 计算年龄
+                const age = calculateAge(birthDate);
+                const ageText = `${age.years}周岁${age.days}天`;
                 
                 let docNumber;
                 const phoneNumber = generatePhoneNumber();
@@ -1071,6 +1117,7 @@
                     name, 
                     gender: genderText,
                     birthDate: formattedBirthDate,
+                    age: ageText,
                     docNumber,
                     phoneNumber
                 };
@@ -1082,7 +1129,7 @@
 
                 batchData.push(dataItem);
                 
-                html += `<tr><td>${i + 1}</td><td>${name}</td><td>${genderText}</td><td>${formattedBirthDate}</td><td>${docNumber}</td><td>${phoneNumber}</td>`;
+                html += `<tr><td>${i + 1}</td><td>${name}</td><td>${genderText}</td><td>${formattedBirthDate}</td><td>${ageText}</td><td>${docNumber}</td><td>${phoneNumber}</td>`;
                 
                 if (generateBankCardChecked) {
                     html += `<td>${bankCardInfo.number}</td><td>${bankCardInfo.bank}</td>`;
@@ -1111,7 +1158,7 @@
                 type = 'application/json';
             } else if (format === 'csv') {
                 const hasBankCard = batchData[0].hasOwnProperty('bankCardNumber');
-                content = '\ufeff姓名,性别,出生日期,证件号码,手机号';
+                content = '\ufeff姓名,性别,出生日期,年龄,证件号码,手机号';
                 if (hasBankCard) {
                     content += ',银行卡号,银行\n';
                 } else {
@@ -1119,7 +1166,7 @@
                 }
                 
                 batchData.forEach(item => {
-                    content += `${item.name},${item.gender},${item.birthDate},${item.docNumber},${item.phoneNumber}`;
+                    content += `${item.name},${item.gender},${item.birthDate},${item.age},${item.docNumber},${item.phoneNumber}`;
                     if (hasBankCard) {
                         content += `,${item.bankCardNumber},${item.bankName}`;
                     }
@@ -1130,7 +1177,7 @@
             } else if (format === 'txt') {
                 content = '\ufeff';
                 batchData.forEach((item, index) => {
-                    content += `${index + 1}. 姓名：${item.name} | 性别：${item.gender} | 出生日期：${item.birthDate} | 证件号码：${item.docNumber} | 手机号：${item.phoneNumber}`;
+                    content += `${index + 1}. 姓名：${item.name} | 性别：${item.gender} | 出生日期：${item.birthDate} | 年龄：${item.age} | 证件号码：${item.docNumber} | 手机号：${item.phoneNumber}`;
                     if (item.bankCardNumber) {
                         content += ` | 银行卡：${item.bankName} - ${item.bankCardNumber}`;
                     }
