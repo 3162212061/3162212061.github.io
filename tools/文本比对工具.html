@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             background: white;
             border-radius: 12px;
@@ -36,13 +36,7 @@
 
         .header h1 {
             font-size: 2.2em;
-            margin-bottom: 8px;
             font-weight: 600;
-        }
-
-        .header p {
-            font-size: 1em;
-            opacity: 0.9;
         }
 
         .main-content {
@@ -62,7 +56,7 @@
         .text-box {
             display: flex;
             flex-direction: column;
-            height: 100%;
+            min-width: 0; /* 防止 flex 子元素溢出 */
         }
 
         .text-box-header {
@@ -70,6 +64,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
+            flex-shrink: 0;
         }
 
         .text-box label {
@@ -91,10 +86,17 @@
             color: white;
             border-radius: 50%;
             font-size: 0.85em;
+            flex-shrink: 0;
+        }
+
+        .text-count {
+            font-size: 0.9em;
+            color: #666;
+            white-space: nowrap;
         }
 
         .text-box textarea {
-            flex: 1;
+            width: 100%;
             min-height: 300px;
             max-height: 500px;
             padding: 20px;
@@ -119,6 +121,7 @@
             justify-content: center;
             gap: 15px;
             margin: 10px 0;
+            flex-wrap: wrap;
         }
 
         .control-btn {
@@ -132,6 +135,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            white-space: nowrap;
         }
 
         .control-btn.primary {
@@ -190,12 +194,15 @@
             border-radius: 10px;
             margin-bottom: 25px;
             box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .similarity-display {
             display: flex;
             align-items: center;
             gap: 20px;
+            flex-shrink: 0;
         }
 
         .similarity-circle {
@@ -264,7 +271,7 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             flex: 1;
-            max-width: 600px;
+            min-width: 0;
         }
 
         .stat-item {
@@ -273,6 +280,7 @@
             border-radius: 8px;
             text-align: center;
             border: 1px solid #e0e0e0;
+            min-width: 0;
         }
 
         .stat-value {
@@ -280,11 +288,13 @@
             font-weight: bold;
             color: #667eea;
             margin-bottom: 5px;
+            word-break: break-all;
         }
 
         .stat-label {
             font-size: 0.85em;
             color: #666;
+            white-space: nowrap;
         }
 
         .highlight-section {
@@ -296,6 +306,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .highlight-header h3 {
@@ -307,6 +319,7 @@
         .legend {
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .legend-item {
@@ -315,12 +328,14 @@
             gap: 8px;
             font-size: 0.9em;
             color: #666;
+            white-space: nowrap;
         }
 
         .legend-color {
             width: 16px;
             height: 16px;
             border-radius: 3px;
+            flex-shrink: 0;
         }
 
         .legend-color.same {
@@ -335,25 +350,60 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 25px;
-            height: 500px;
+            min-height: 400px;
+        }
+
+        .text-display-container {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .text-display-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            background: #fafafa;
+            flex-shrink: 0;
+        }
+
+        .text-display-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .text-display-count {
+            font-size: 0.9em;
+            color: #666;
+            background: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
         }
 
         .text-display {
-            background: white;
-            border-radius: 10px;
             padding: 20px;
-            border: 2px solid #e0e0e0;
             font-family: 'Consolas', 'Monaco', monospace;
             font-size: 14px;
             line-height: 1.8;
             white-space: pre-wrap;
             word-wrap: break-word;
             overflow-y: auto;
-            height: 100%;
+            overflow-x: auto;
+            flex: 1;
+            min-height: 0;
         }
 
         .text-display::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
 
         .text-display::-webkit-scrollbar-track {
@@ -370,43 +420,6 @@
             background: #a8a8a8;
         }
 
-        .text-display-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .text-display-title {
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .text-display-count {
-            font-size: 0.9em;
-            color: #666;
-            background: #f8f9fa;
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-        .footer-info {
-            margin-top: 30px;
-            padding: 15px;
-            background: #e8f4fc;
-            border-radius: 8px;
-            color: #2c3e50;
-            font-size: 0.95em;
-            line-height: 1.6;
-        }
-
-        .footer-info strong {
-            color: #667eea;
-        }
-
         .empty-state {
             color: #999;
             text-align: center;
@@ -414,7 +427,6 @@
             font-style: italic;
         }
 
-        /* 文本差异高亮样式 */
         .diff-same {
             background-color: rgba(76, 175, 80, 0.15);
             color: #2e7d32;
@@ -430,20 +442,25 @@
             font-weight: bold;
         }
 
-        @media (max-width: 1024px) {
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
             .container {
                 max-width: 95%;
             }
             
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
             .input-section,
             .text-display-area {
                 grid-template-columns: 1fr;
-                gap: 20px;
             }
             
             .summary-bar {
                 flex-direction: column;
-                gap: 20px;
                 align-items: stretch;
             }
             
@@ -454,61 +471,36 @@
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 1.8em;
-            }
             
             .control-section {
-                flex-wrap: wrap;
+                flex-direction: column;
             }
             
             .control-btn {
-                flex: 1;
-                min-width: 140px;
+                width: 100%;
                 justify-content: center;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .text-display-area {
-                height: 400px;
-            }
-            
-            .text-display {
-                font-size: 13px;
             }
         }
 
         @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.6em;
+            }
+            
             .stats-grid {
                 grid-template-columns: 1fr;
             }
             
-            .legend {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .text-display-area {
-                height: 350px;
-            }
-            
-            .similarity-circle {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .similarity-value {
-                font-size: 1.6em;
+            .text-box textarea {
+                min-height: 200px;
             }
         }
     </style>
@@ -517,7 +509,6 @@
     <div class="container">
         <div class="header">
             <h1>🔍 文本比对工具</h1>
-            <p>快速比较两段文本的差异，计算相似度，并高亮显示不同之处</p>
         </div>
 
         <div class="main-content">
@@ -528,14 +519,14 @@
                         <label><span>1</span>第一段文本</label>
                         <div class="text-count" id="text1-count">0 字符</div>
                     </div>
-                    <textarea id="text1" rows="12" placeholder="请输入或粘贴第一段文本..."></textarea>
+                    <textarea id="text1" placeholder="请输入或粘贴第一段文本..."></textarea>
                 </div>
                 <div class="text-box">
                     <div class="text-box-header">
                         <label><span>2</span>第二段文本</label>
                         <div class="text-count" id="text2-count">0 字符</div>
                     </div>
-                    <textarea id="text2" rows="12" placeholder="请输入或粘贴第二段文本..."></textarea>
+                    <textarea id="text2" placeholder="请输入或粘贴第二段文本..."></textarea>
                 </div>
             </div>
 
@@ -544,458 +535,292 @@
                 <button class="control-btn primary" onclick="compareTexts()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        <path d="M12 8v4l3 3"/>
+                        <path d="M9 12l2 2 4-4"/>
                     </svg>
                     开始比对
                 </button>
-                <button class="control-btn secondary" onclick="clearTexts()">
+                <button class="control-btn secondary" onclick="swapTexts()">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
-                    </svg>
-                    清空文本
-                </button>
-                <button class="control-btn warning" onclick="swapTexts()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 8l4 4-4 4M7 8l-4 4 4 4M14 4l-4 16"/>
+                        <path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/>
                     </svg>
                     交换文本
                 </button>
+                <button class="control-btn warning" onclick="clearAll()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                    清空所有
+                </button>
             </div>
 
-            <!-- 结果展示区域 -->
-            <div class="result-section" id="resultSection">
-                <!-- 摘要信息 -->
+            <!-- 结果显示区域 -->
+            <div class="result-section" id="result-section">
+                <!-- 统计摘要栏 -->
                 <div class="summary-bar">
                     <div class="similarity-display">
                         <div class="similarity-circle">
-                            <svg width="100%" height="100%" viewBox="0 0 42 42">
-                                <circle class="circle-bg" cx="21" cy="21" r="15.9155"></circle>
-                                <circle class="circle-progress" cx="21" cy="21" r="15.9155" id="progressCircle"></circle>
+                            <svg width="100" height="100">
+                                <circle class="circle-bg" cx="50" cy="50" r="40"/>
+                                <circle class="circle-progress" id="progress-circle" cx="50" cy="50" r="40" 
+                                        stroke-dasharray="0 251.2" stroke-dashoffset="0"/>
                             </svg>
-                            <div class="similarity-percent" id="similarityPercent">
-                                0<span>%</span>
+                            <div class="similarity-percent">
+                                <div id="similarity-text">0%</div>
                             </div>
                         </div>
                         <div class="similarity-info">
-                            <div class="similarity-value" id="similarityValue">0%</div>
-                            <div class="similarity-label" id="similarityLabel">相似度</div>
+                            <div class="similarity-label">相似度</div>
                         </div>
                     </div>
-                    
+
                     <div class="stats-grid">
                         <div class="stat-item">
-                            <div class="stat-value" id="totalChars">0</div>
-                            <div class="stat-label">总字符数</div>
+                            <div class="stat-value" id="stat-same">0</div>
+                            <div class="stat-label">相同字符</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" id="sameChars">0</div>
-                            <div class="stat-label">相同字符数</div>
+                            <div class="stat-value" id="stat-diff">0</div>
+                            <div class="stat-label">不同字符</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" id="diffChars">0</div>
-                            <div class="stat-label">不同字符数</div>
+                            <div class="stat-value" id="stat-total1">0</div>
+                            <div class="stat-label">文本1总数</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" id="diffLines">0</div>
-                            <div class="stat-label">差异行数</div>
+                            <div class="stat-value" id="stat-total2">0</div>
+                            <div class="stat-label">文本2总数</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 高亮文本展示 -->
+                <!-- 高亮显示区域 -->
                 <div class="highlight-section">
                     <div class="highlight-header">
-                        <h3>文本差异对比</h3>
+                        <h3>📊 对比结果</h3>
                         <div class="legend">
                             <div class="legend-item">
                                 <div class="legend-color same"></div>
-                                <div>相同内容</div>
+                                <span>相同部分</span>
                             </div>
                             <div class="legend-item">
                                 <div class="legend-color diff"></div>
-                                <div>不同内容</div>
+                                <span>不同部分</span>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="text-display-area">
                         <div class="text-display-container">
                             <div class="text-display-header">
-                                <div class="text-display-title">文本1</div>
-                                <div class="text-display-count" id="text1-result-count">0 字符</div>
+                                <div class="text-display-title">文本 1</div>
+                                <div class="text-display-count" id="display1-count">0 字符</div>
                             </div>
-                            <div class="text-display" id="highlightedText1">
-                                <div class="empty-state">比对后将显示高亮文本</div>
+                            <div class="text-display" id="text1-display">
+                                <div class="empty-state">等待比对...</div>
                             </div>
                         </div>
-                        
+
                         <div class="text-display-container">
                             <div class="text-display-header">
-                                <div class="text-display-title">文本2</div>
-                                <div class="text-display-count" id="text2-result-count">0 字符</div>
+                                <div class="text-display-title">文本 2</div>
+                                <div class="text-display-count" id="display2-count">0 字符</div>
                             </div>
-                            <div class="text-display" id="highlightedText2">
-                                <div class="empty-state">比对后将显示高亮文本</div>
+                            <div class="text-display" id="text2-display">
+                                <div class="empty-state">等待比对...</div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- 底部信息 -->
-                <div class="footer-info">
-                    <p><strong>使用说明：</strong> 比对结果中，<span class="diff-same" style="padding: 2px 4px;">相同内容</span>会以绿色背景高亮显示，<span class="diff-different" style="padding: 2px 4px;">不同内容</span>会以红色背景高亮显示。相似度基于字符级别的比较计算。</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 更新文本计数
-        function updateTextCount() {
-            const text1 = document.getElementById('text1');
-            const text2 = document.getElementById('text2');
-            const count1 = document.getElementById('text1-count');
-            const count2 = document.getElementById('text2-count');
-            
-            count1.textContent = `${text1.value.length} 字符`;
-            count2.textContent = `${text2.value.length} 字符`;
+        // 实时字符计数
+        document.getElementById('text1').addEventListener('input', function() {
+            updateCharCount('text1', 'text1-count');
+        });
+
+        document.getElementById('text2').addEventListener('input', function() {
+            updateCharCount('text2', 'text2-count');
+        });
+
+        function updateCharCount(textId, countId) {
+            const text = document.getElementById(textId).value;
+            const count = text.length;
+            document.getElementById(countId).textContent = `${count.toLocaleString()} 字符`;
         }
-        
-        // 监听文本输入
-        document.getElementById('text1').addEventListener('input', updateTextCount);
-        document.getElementById('text2').addEventListener('input', updateTextCount);
-        
-        /**
-         * 计算两段文本的相似度
-         */
-        function calculateSimilarity(text1, text2) {
-            if (!text1 && !text2) return 100;
-            if (!text1 || !text2) return 0;
-            
-            // 使用改进的相似度算法（考虑字符和词序）
-            const longer = text1.length > text2.length ? text1 : text2;
-            const shorter = text1.length > text2.length ? text2 : text1;
-            
-            // 计算编辑距离
-            const dp = Array(shorter.length + 1).fill().map(() => Array(longer.length + 1).fill(0));
-            
-            for (let i = 0; i <= shorter.length; i++) dp[i][0] = i;
-            for (let j = 0; j <= longer.length; j++) dp[0][j] = j;
-            
-            for (let i = 1; i <= shorter.length; i++) {
-                for (let j = 1; j <= longer.length; j++) {
-                    const cost = shorter[i - 1] === longer[j - 1] ? 0 : 1;
-                    dp[i][j] = Math.min(
-                        dp[i - 1][j] + 1,
-                        dp[i][j - 1] + 1,
-                        dp[i - 1][j - 1] + cost
-                    );
-                }
-            }
-            
-            const distance = dp[shorter.length][longer.length];
-            const maxLength = Math.max(text1.length, text2.length);
-            
-            const similarity = maxLength === 0 ? 100 : ((maxLength - distance) / maxLength) * 100;
-            return Math.round(similarity * 100) / 100;
-        }
-        
-        /**
-         * 生成高亮显示的HTML（改进算法）
-         */
-        function highlightDifferences(text1, text2) {
-            // 按行分割文本
-            const lines1 = text1.split('\n');
-            const lines2 = text2.split('\n');
-            
-            let result1 = [];
-            let result2 = [];
-            let diffLines = 0;
-            
-            const maxLines = Math.max(lines1.length, lines2.length);
-            
-            for (let i = 0; i < maxLines; i++) {
-                const line1 = lines1[i] || '';
-                const line2 = lines2[i] || '';
-                
-                // 比较行内容
-                if (line1 === line2) {
-                    // 相同行，添加行号和内容
-                    result1.push(`<div class="line"><span class="diff-same">${escapeHtml(line1)}</span></div>`);
-                    result2.push(`<div class="line"><span class="diff-same">${escapeHtml(line2)}</span></div>`);
-                } else {
-                    // 不同行，需要逐字符比较
-                    diffLines++;
-                    const highlighted1 = highlightLineDifferences(line1, line2, 'text1');
-                    const highlighted2 = highlightLineDifferences(line2, line1, 'text2');
-                    
-                    result1.push(`<div class="line">${highlighted1}</div>`);
-                    result2.push(`<div class="line">${highlighted2}</div>`);
-                }
-            }
-            
-            return {
-                html1: result1.join(''),
-                html2: result2.join(''),
-                diffLines
-            };
-        }
-        
-        /**
-         * 高亮行内差异
-         */
-        function highlightLineDifferences(line1, line2, source) {
-            if (!line1 && !line2) return '';
-            if (!line1) return `<span class="diff-different">${escapeHtml(line2)}</span>`;
-            if (!line2) return `<span class="diff-different">${escapeHtml(line1)}</span>`;
-            
-            // 简单的逐字符比较
-            let result = '';
-            const maxLength = Math.max(line1.length, line2.length);
-            
-            for (let i = 0; i < maxLength; i++) {
-                const char1 = line1[i] || '';
-                const char2 = line2[i] || '';
-                
-                if (char1 === char2) {
-                    result += `<span class="diff-same">${escapeHtml(char1)}</span>`;
-                } else {
-                    result += `<span class="diff-different">${escapeHtml(char1)}</span>`;
-                }
-            }
-            
-            return result;
-        }
-        
-        /**
-         * 计算统计信息
-         */
-        function calculateStatistics(text1, text2) {
-            const totalChars = text1.length + text2.length;
-            
-            // 计算相同字符数
-            let sameChars = 0;
-            const minLength = Math.min(text1.length, text2.length);
-            
-            for (let i = 0; i < minLength; i++) {
-                if (text1[i] === text2[i]) {
-                    sameChars++;
-                }
-            }
-            
-            const diffChars = totalChars - (sameChars * 2);
-            
-            return {
-                totalChars,
-                sameChars,
-                diffChars: Math.max(0, diffChars)
-            };
-        }
-        
-        /**
-         * HTML特殊字符转义
-         */
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        /**
-         * 更新圆形进度条
-         */
-        function updateProgressCircle(percent) {
-            const circle = document.getElementById('progressCircle');
-            const radius = 15.9155;
-            const circumference = 2 * Math.PI * radius;
-            const offset = circumference - (percent / 100) * circumference;
-            
-            circle.style.strokeDasharray = `${circumference} ${circumference}`;
-            circle.style.strokeDashoffset = offset;
-            
-            // 根据相似度设置不同的颜色
-            if (percent >= 90) {
-                circle.style.stroke = '#4CAF50';
-            } else if (percent >= 70) {
-                circle.style.stroke = '#8BC34A';
-            } else if (percent >= 50) {
-                circle.style.stroke = '#FFC107';
-            } else if (percent >= 30) {
-                circle.style.stroke = '#FF9800';
-            } else {
-                circle.style.stroke = '#F44336';
-            }
-        }
-        
-        /**
-         * 获取相似度描述
-         */
-        function getSimilarityDescription(percent) {
-            if (percent >= 95) return '几乎完全相同';
-            if (percent >= 85) return '非常相似';
-            if (percent >= 70) return '高度相似';
-            if (percent >= 55) return '比较相似';
-            if (percent >= 40) return '部分相似';
-            if (percent >= 25) return '略有相似';
-            if (percent >= 10) return '差异较大';
-            return '完全不同';
-        }
-        
-        /**
-         * 主比对函数
-         */
-        function compareTexts() {
-            const text1 = document.getElementById('text1').value;
-            const text2 = document.getElementById('text2').value;
-            
-            // 检查是否有输入
-            if (!text1 && !text2) {
-                alert('请输入要比较的文本！');
-                return;
-            }
-            
-            // 计算相似度
-            const similarity = calculateSimilarity(text1, text2);
-            
-            // 生成高亮文本
-            const highlighted = highlightDifferences(text1, text2);
-            
-            // 计算统计信息
-            const stats = calculateStatistics(text1, text2);
-            
-            // 更新UI
-            document.getElementById('similarityValue').textContent = similarity + '%';
-            document.getElementById('similarityPercent').innerHTML = `${Math.round(similarity)}<span>%</span>`;
-            document.getElementById('similarityLabel').textContent = getSimilarityDescription(similarity);
-            
-            // 更新统计信息
-            document.getElementById('totalChars').textContent = stats.totalChars;
-            document.getElementById('sameChars').textContent = stats.sameChars;
-            document.getElementById('diffChars').textContent = stats.diffChars;
-            document.getElementById('diffLines').textContent = highlighted.diffLines;
-            
-            // 更新文本显示
-            document.getElementById('highlightedText1').innerHTML = highlighted.html1 || '<div class="empty-state">无内容</div>';
-            document.getElementById('highlightedText2').innerHTML = highlighted.html2 || '<div class="empty-state">无内容</div>';
-            
-            // 更新结果计数
-            document.getElementById('text1-result-count').textContent = `${text1.length} 字符`;
-            document.getElementById('text2-result-count').textContent = `${text2.length} 字符`;
-            
-            // 更新进度条
-            updateProgressCircle(similarity);
-            
-            // 显示结果区域
-            const resultSection = document.getElementById('resultSection');
-            resultSection.classList.add('active');
-            
-            // 平滑滚动到结果区域
-            setTimeout(() => {
-                resultSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-            }, 100);
-        }
-        
-        /**
-         * 清空文本
-         */
-        function clearTexts() {
-            if (confirm('确定要清空两段文本吗？')) {
-                document.getElementById('text1').value = '';
-                document.getElementById('text2').value = '';
-                document.getElementById('resultSection').classList.remove('active');
-                updateTextCount();
-            }
-        }
-        
-        /**
-         * 交换文本
-         */
+
+        // 交换文本
         function swapTexts() {
             const text1 = document.getElementById('text1');
             const text2 = document.getElementById('text2');
             const temp = text1.value;
             text1.value = text2.value;
             text2.value = temp;
-            updateTextCount();
-            
-            // 如果结果区域已显示，重新比对
-            if (document.getElementById('resultSection').classList.contains('active')) {
-                compareTexts();
+            updateCharCount('text1', 'text1-count');
+            updateCharCount('text2', 'text2-count');
+        }
+
+        // 清空所有
+        function clearAll() {
+            if (confirm('确定要清空所有文本和结果吗？')) {
+                document.getElementById('text1').value = '';
+                document.getElementById('text2').value = '';
+                document.getElementById('result-section').classList.remove('active');
+                updateCharCount('text1', 'text1-count');
+                updateCharCount('text2', 'text2-count');
             }
         }
-        
-        /**
-         * 页面加载时初始化
-         */
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化文本计数
-            updateTextCount();
+
+        // 比对文本
+        function compareTexts() {
+            const text1 = document.getElementById('text1').value;
+            const text2 = document.getElementById('text2').value;
+
+            if (!text1 || !text2) {
+                alert('请输入两段文本后再进行比对！');
+                return;
+            }
+
+            // 使用最长公共子序列算法进行比对
+            const result = lcsCompare(text1, text2);
             
-            // 为文本框添加快捷键支持
-            document.getElementById('text1').addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.key === 'Enter') {
-                    compareTexts();
+            // 显示结果
+            displayResults(result, text1, text2);
+        }
+
+        // LCS算法实现
+        function lcsCompare(text1, text2) {
+            const m = text1.length;
+            const n = text2.length;
+            const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+
+            // 构建DP表
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    if (text1[i - 1] === text2[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1] + 1;
+                    } else {
+                        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    }
                 }
-            });
-            
-            document.getElementById('text2').addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.key === 'Enter') {
-                    compareTexts();
+            }
+
+            // 回溯构建结果
+            const result1 = [];
+            const result2 = [];
+            let i = m, j = n;
+
+            while (i > 0 && j > 0) {
+                if (text1[i - 1] === text2[j - 1]) {
+                    result1.unshift({ char: text1[i - 1], type: 'same' });
+                    result2.unshift({ char: text2[j - 1], type: 'same' });
+                    i--;
+                    j--;
+                } else if (dp[i - 1][j] > dp[i][j - 1]) {
+                    result1.unshift({ char: text1[i - 1], type: 'diff' });
+                    i--;
+                } else {
+                    result2.unshift({ char: text2[j - 1], type: 'diff' });
+                    j--;
                 }
-            });
+            }
+
+            while (i > 0) {
+                result1.unshift({ char: text1[i - 1], type: 'diff' });
+                i--;
+            }
+
+            while (j > 0) {
+                result2.unshift({ char: text2[j - 1], type: 'diff' });
+                j--;
+            }
+
+            return { result1, result2, lcsLength: dp[m][n] };
+        }
+
+        // 显示结果
+        function displayResults(result, text1, text2) {
+            const { result1, result2, lcsLength } = result;
+
+            // 计算统计数据
+            const sameCount = lcsLength;
+            const total1 = text1.length;
+            const total2 = text2.length;
+            const diffCount = total1 + total2 - 2 * sameCount;
+            const similarity = Math.round((2 * sameCount / (total1 + total2)) * 100);
+
+            // 更新统计数据
+            document.getElementById('stat-same').textContent = sameCount.toLocaleString();
+            document.getElementById('stat-diff').textContent = diffCount.toLocaleString();
+            document.getElementById('stat-total1').textContent = total1.toLocaleString();
+            document.getElementById('stat-total2').textContent = total2.toLocaleString();
+            document.getElementById('similarity-text').textContent = similarity + '%';
+
+            // 更新进度圈
+            const circumference = 2 * Math.PI * 40;
+            const progress = (similarity / 100) * circumference;
+            const progressCircle = document.getElementById('progress-circle');
+            progressCircle.style.strokeDasharray = `${progress} ${circumference}`;
             
-            // 设置初始进度条
-            updateProgressCircle(0);
+            // 根据相似度改变颜色
+            if (similarity >= 80) {
+                progressCircle.style.stroke = '#4CAF50';
+            } else if (similarity >= 50) {
+                progressCircle.style.stroke = '#FF9800';
+            } else {
+                progressCircle.style.stroke = '#F44336';
+            }
+
+            // 渲染高亮文本
+            renderHighlightedText('text1-display', result1, 'display1-count', total1);
+            renderHighlightedText('text2-display', result2, 'display2-count', total2);
+
+            // 显示结果区域
+            document.getElementById('result-section').classList.add('active');
             
-            // 自动调整文本框高度
-            const textareas = document.querySelectorAll('textarea');
-            textareas.forEach(textarea => {
-                textarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 500) + 'px';
+            // 平滑滚动到结果区域
+            setTimeout(() => {
+                document.getElementById('result-section').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
                 });
-            });
-            
-            // 添加示例文本（可选）
-            const addExampleBtn = document.createElement('button');
-            addExampleBtn.className = 'control-btn secondary';
-            addExampleBtn.style.marginLeft = 'auto';
-            addExampleBtn.style.marginRight = '10px';
-            addExampleBtn.innerHTML = `
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-                </svg>
-                加载示例
-            `;
-            addExampleBtn.onclick = function() {
-                document.getElementById('text1').value = `文本比对工具示例
+            }, 100);
+        }
 
-功能说明：
-1. 比较两段文本的相似度
-2. 高亮显示相同和不同的部分
-3. 提供详细的统计信息
+        // 渲染高亮文本
+        function renderHighlightedText(elementId, result, countId, total) {
+            const container = document.getElementById(elementId);
+            let html = '';
 
-这个工具非常实用，可以帮助用户快速找到文本差异。`;
-                
-                document.getElementById('text2').value = `文本比对工具示例
+            for (const item of result) {
+                const escapedChar = escapeHtml(item.char);
+                if (item.type === 'same') {
+                    html += `<span class="diff-same">${escapedChar}</span>`;
+                } else {
+                    html += `<span class="diff-different">${escapedChar}</span>`;
+                }
+            }
 
-功能介绍：
-1. 比较两段文本的相似程度
-2. 高亮显示相同和不同的内容
-3. 提供详细的统计数据
+            container.innerHTML = html || '<div class="empty-state">无内容</div>';
+            document.getElementById(countId).textContent = `${total.toLocaleString()} 字符`;
+        }
 
-该工具非常实用，可以帮助使用者快速发现文本差异。`;
-                
-                updateTextCount();
-                compareTexts();
+        // HTML转义
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;',
+                '\n': '<br>',
+                ' ': '&nbsp;'
             };
-            
-            document.querySelector('.control-section').prepend(addExampleBtn);
-        });
+            return text.replace(/[&<>"'\n ]/g, m => map[m]);
+        }
     </script>
 </body>
 </html>
+
