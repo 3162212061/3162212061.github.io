@@ -1170,6 +1170,72 @@
             return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
         }
 
+        // 自定义设计功能
+        document.getElementById('cardNumber').addEventListener('input', function() {
+            const cardNumber = this.value.replace(/\s/g, '');
+            const bankInfoDiv = document.getElementById('bankInfo');
+            const bankSelector = document.getElementById('bankSelector');
+            
+            if (cardNumber.length >= 6) {
+                const bankInfo = identifyBank(cardNumber);
+                bankInfoDiv.innerHTML = `
+                    <p><strong>银行信息：</strong>${bankInfo.name} - ${bankInfo.type}</p>
+                    <p><strong>验证状态：</strong>${verifyLuhn(cardNumber) ? '<span class="valid">✓ 已通过LUHN验证</span>' : '<span class="invalid">✗ 未通过LUHN验证</span>'}</p>
+                `;
+                bankInfoDiv.classList.add('show');
+                bankSelector.classList.add('show');
+            } else {
+                bankInfoDiv.classList.remove('show');
+                bankSelector.classList.remove('show');
+            }
+        });
+
+        // 生成自定义银行卡
+        document.getElementById('generateBtn').addEventListener('click', function() {
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const cardHolder = document.getElementById('cardHolder').value.trim() || '持卡人姓名';
+            const manualBankSelect = document.getElementById('manualBank');
+            const canvas = document.getElementById('bankCard');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            if (!cardNumber || cardNumber.length < 16 || cardNumber.length > 19) {
+                alert('请输入有效的银行卡号（16-19位）！');
+                return;
+            }
+            
+            let bankDetails;
+            
+            // 检查是否手动选择了银行
+            if (manualBankSelect.value) {
+                bankDetails = bankCodeMap[manualBankSelect.value];
+            } else {
+                // 自动识别银行
+                bankDetails = getBankDetails(cardNumber);
+            }
+            
+            // 绘制银行卡
+            drawBankCard(canvas, bankDetails, cardNumber, cardHolder, !!manualBankSelect.value);
+            
+            // 显示下载按钮
+            downloadBtn.classList.add('show');
+        });
+
+        // 下载自定义银行卡
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const canvas = document.getElementById('bankCard');
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            
+            if (!cardNumber) {
+                alert('请先生成银行卡！');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.download = `自定义银行卡_${cardNumber}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
         // 页面加载时初始化
         window.onload = function() {
             updatePrefix();
