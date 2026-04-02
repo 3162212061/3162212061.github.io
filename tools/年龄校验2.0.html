@@ -735,6 +735,35 @@
         }
 
         /**
+         * 计算详细年龄信息（周岁和剩余天数）
+         * @param {Date} birthDate - 出生日期
+         * @param {Date} targetDate - 目标日期（默认为今天）
+         * @returns {Object} 包含周岁和剩余天数的对象
+         */
+        function calculateDetailedAge(birthDate, targetDate = new Date()) {
+            const age = calculateAge(birthDate, targetDate);
+            
+            // 计算当前年龄的生日
+            const birthdayThisYear = new Date(targetDate.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+            
+            // 计算距离下一个生日的天数
+            let days;
+            if (birthdayThisYear > targetDate) {
+                // 已经过了今年的生日
+                const lastBirthday = new Date(targetDate.getFullYear() - 1, birthDate.getMonth(), birthDate.getDate());
+                days = Math.floor((targetDate - lastBirthday) / (1000 * 60 * 60 * 24));
+            } else {
+                // 还没过今年的生日
+                days = Math.floor((targetDate - birthdayThisYear) / (1000 * 60 * 60 * 24));
+            }
+            
+            return {
+                years: age,
+                days: days
+            };
+        }
+
+        /**
          * 计算天数年龄
          * @param {Date} birthDate - 出生日期
          * @param {Date} targetDate - 目标日期（默认为今天）
@@ -1119,14 +1148,15 @@
                 let isValid, ageDisplay;
         
         if (currentMode === 'year') {
-            // 周岁模式：使用周岁计算
-            const currentAge = calculateAge(birthDate, referenceDate);
+            // 周岁模式：使用详细年龄计算
+            const detailedAge = calculateDetailedAge(birthDate, referenceDate);
+            const currentAge = detailedAge.years;
             isValid = currentAge >= minAge && currentAge <= maxAge;
-            ageDisplay = `${currentAge}周岁`;
+            ageDisplay = `${currentAge}周岁(${detailedAge.days}天)`;
         } else {
             // 天数模式：参照天数校验测试.html的逻辑
             const currentAgeDays = calculateAgeInDays(birthDate, referenceDate);
-            const currentAgeYears = calculateAge(birthDate, referenceDate);
+            const detailedAge = calculateDetailedAge(birthDate, referenceDate);
             const minAgeDays = parseInt(document.getElementById('minAgeDays').value);
             const maxAgeYears = parseInt(document.getElementById('maxAgeDays').value);
             
@@ -1138,7 +1168,7 @@
             // 关键修复：使用天数进行比较，遵循"天数校验测试.html"的逻辑
             // 注意：这里的maxDays是未满的值，所以使用<而不是<=
             isValid = currentAgeDays >= minDays && currentAgeDays < maxDays;
-            ageDisplay = `${currentAgeDays}天（${currentAgeYears}周岁）`;
+            ageDisplay = `${currentAgeDays}天（${detailedAge.years}周岁(${detailedAge.days}天)）`;
         }
 
         resultHTML += `
